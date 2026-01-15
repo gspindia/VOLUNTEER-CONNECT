@@ -355,7 +355,8 @@ export const MOCK_LABS: Lab[] = [
     screeningDate: '16/01/2026 to 19/01/2026',
     screeningTime: '07:30 to 10:30',
     requirements: 'Original Aadhar card, PAN Card compulsory\nScreening date 16/01/2026 to 19/01/2026\nScreening time morning 07:30 to 10:30\n\nNotes All India Net ( OVIS) check and block',
-    lastUpdated: '15/01/2026 10:30 AM'
+    lastUpdated: '15/01/2026 10:30 AM',
+    password: '1234'
   },
   {
     id: '2',
@@ -369,7 +370,8 @@ export const MOCK_LABS: Lab[] = [
     volunteerGender: 'All',
     inHouse: '24 Hours',
     periodCount: '2',
-    lastUpdated: '14/01/2026 02:15 PM'
+    lastUpdated: '14/01/2026 02:15 PM',
+    password: '1234'
   },
   {
     id: '3',
@@ -380,7 +382,8 @@ export const MOCK_LABS: Lab[] = [
     report: 'Annual safety audit 2024',
     contact: 'Vikas Patel',
     phone: '+91 9876543212',
-    lastUpdated: '10/01/2026 09:00 AM'
+    lastUpdated: '10/01/2026 09:00 AM',
+    password: '1234'
   }
 ];
 

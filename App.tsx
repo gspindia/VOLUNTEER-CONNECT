@@ -36,6 +36,10 @@ const App: React.FC = () => {
   const [isLangOpen, setIsLangOpen] = useState(false);
   
   const [formData, setFormData] = useState<Partial<Lab>>({});
+  // Facility Password States
+  const [facilityPassword, setFacilityPassword] = useState('');
+  const [confirmFacilityPassword, setConfirmFacilityPassword] = useState('');
+  
   const [activeListTab, setActiveListTab] = useState<'STATUS' | 'DETAILS'>('STATUS');
   
   // SignUp State
@@ -109,19 +113,42 @@ const App: React.FC = () => {
 
     if (formData.id) {
       // Update existing
+      const originalLab = labs.find(l => l.id === formData.id);
+      
+      if (!originalLab) {
+        alert("Facility not found.");
+        return;
+      }
+      
+      if (originalLab.password !== facilityPassword) {
+        alert("Incorrect Facility Password. Updates cannot be saved.");
+        return;
+      }
+
       setLabs(prev => prev.map(l => l.id === formData.id ? { ...l, ...formData, lastUpdated: timestamp } as Lab : l));
     } else {
       // Create new
+      if (facilityPassword !== confirmFacilityPassword) {
+         alert("Passwords do not match.");
+         return;
+      }
+      if (!facilityPassword) {
+         alert("Please set a password for this facility.");
+         return;
+      }
+
       const newLab: Lab = {
         id: Date.now().toString(),
         name: formData.name || 'New Facility',
         state: (formData.state as string) || State.Maharashtra,
+        address: formData.address || '',
         status: 'Pending',
         detail: formData.detail || '',
         report: formData.report || 'Pending',
         contact: formData.contact || '',
         phone: formData.phone || '',
         logo: formData.logo,
+        password: facilityPassword, // Store the password
         volunteerGender: formData.volunteerGender || 'All',
         inHouse: formData.inHouse || '-',
         periodCount: formData.periodCount || '-',
@@ -146,13 +173,25 @@ const App: React.FC = () => {
     
     setScreen('CLIENT_DASHBOARD');
     setFormData({});
+    setFacilityPassword('');
+    setConfirmFacilityPassword('');
   };
 
   const deleteLab = (id: string) => {
+    const originalLab = labs.find(l => l.id === id);
+    if (!originalLab) return;
+
+    if (originalLab.password !== facilityPassword) {
+      alert("Incorrect Facility Password. Cannot delete facility.");
+      return;
+    }
+
     if (window.confirm('Are you sure you want to delete this facility? This action cannot be undone.')) {
       setLabs(prev => prev.filter(l => l.id !== id));
       setScreen('CLIENT_DASHBOARD');
       setFormData({});
+      setFacilityPassword('');
+      setConfirmFacilityPassword('');
     }
   };
   
@@ -176,7 +215,7 @@ const App: React.FC = () => {
   };
 
   const openGoogleMaps = (lab: Lab) => {
-    const query = encodeURIComponent(`${lab.name}, ${lab.state}`);
+    const query = encodeURIComponent(`${lab.name}, ${lab.address || ''}, ${lab.state}`);
     window.open(`https://www.google.com/maps/search/?api=1&query=${query}`, '_blank');
   };
 
@@ -677,7 +716,7 @@ const App: React.FC = () => {
                         <div className="flex justify-between items-center border-t border-gray-50 dark:border-slate-800 pt-2">
                           <div className="flex items-center text-[10px] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-wide">
                             <svg className="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
-                            {lab.state}
+                            {lab.address ? `${lab.address}, ${lab.state}` : lab.state}
                           </div>
                           <span className="text-[10px] font-bold text-[#007DA5] dark:text-blue-400 group-hover:translate-x-1 transition-transform flex items-center uppercase tracking-wide">
                             {t.view} <svg className="w-3 h-3 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7"></path></svg>
@@ -695,108 +734,102 @@ const App: React.FC = () => {
     );
   };
 
-  const DetailRow = ({ label, value, isHighlight = false, isAction = false }: { label: string, value?: string, isHighlight?: boolean, isAction?: boolean }) => (
-    <div className={`flex items-start py-1.5 ${isHighlight ? 'bg-[#007DA5]/10 dark:bg-blue-900/20 p-2 rounded-lg my-1 border border-[#007DA5]/20 dark:border-blue-700/30' : ''}`}>
-      <svg className="w-4 h-4 text-gray-400 mt-0.5 mr-2 flex-shrink-0" viewBox="0 0 20 20" fill="currentColor">
-         <path fillRule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clipRule="evenodd" />
-      </svg>
-      <div className="flex-1 flex items-start text-sm">
-        <span className="font-bold text-gray-700 dark:text-gray-300 w-28 shrink-0">{label}</span>
-        <span className="text-gray-400 px-2">-</span>
-        {isAction ? (
-           <button className="flex-1 text-left font-black text-[#1A005B] dark:text-blue-200 italic hover:text-[#007DA5] dark:hover:text-blue-300 transition-colors flex items-center">
-             <svg className="w-4 h-4 mr-1 text-yellow-500" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" /></svg>
-             CLICK HERE AND WATCH AD TO VIEW
-           </button>
-        ) : (
-           <span className={`font-bold text-left flex-1 break-words ${isHighlight ? 'text-[#1A005B] dark:text-blue-200' : 'text-[#007DA5] dark:text-blue-400'}`}>
-             {value || 'N/A'}
-           </span>
-        )}
-      </div>
-    </div>
-  );
-
   const renderLabDetail = () => {
     if (!selectedLab) return null;
+
     return (
       <>
-        <div className="relative">
-          <div className="absolute top-0 left-0 w-full h-48 bg-gradient-to-br from-[#1A005B] to-[#007DA5] rounded-b-[3rem] z-0"></div>
-          
-          <div className="relative z-10 px-6 pt-12">
-            <div className="flex justify-between items-center mb-6 text-white">
-              <button onClick={() => setScreen('LAB_LIST')} className="p-2 -ml-2 rounded-full hover:bg-white/20 transition-colors">
-                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 19l-7-7 7-7"></path></svg>
-              </button>
-              <h1 className="text-lg font-bold opacity-90">{t.facilities} Details</h1>
-              <div className="w-8"></div>
+        <Header 
+          title={selectedLab.name}
+          showBack={true}
+        />
+        <div className="px-6 pb-24 overflow-y-auto h-[calc(100vh-140px)] custom-scrollbar">
+          <div className="bg-white dark:bg-slate-900 rounded-3xl p-6 shadow-sm border border-gray-100 dark:border-slate-800 transition-colors">
+            
+            <div className="flex flex-col items-center mb-6">
+                <div className="w-24 h-24 rounded-full bg-gray-100 dark:bg-slate-800 border-4 border-white dark:border-slate-700 shadow-lg flex items-center justify-center overflow-hidden mb-4">
+                     {selectedLab.logo ? (
+                         <img src={selectedLab.logo} alt={selectedLab.name} className="w-full h-full object-cover" />
+                     ) : (
+                         <span className="text-3xl font-black text-[#1A005B] dark:text-blue-200 opacity-40">{selectedLab.name.charAt(0)}</span>
+                     )}
+                </div>
+                <h2 className="text-xl font-black text-[#1A005B] dark:text-blue-100 text-center mb-1">{selectedLab.name}</h2>
+                <div className="flex items-center space-x-2">
+                     <span className={`px-2 py-0.5 rounded text-[10px] font-black uppercase tracking-wider ${
+                        selectedLab.status === 'Active' ? 'bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400' :
+                        selectedLab.status === 'Pending' ? 'bg-yellow-100 dark:bg-yellow-900/30 text-yellow-700 dark:text-yellow-400' :
+                        'bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400'
+                      }`}>
+                        {selectedLab.status}
+                      </span>
+                      <span className="text-gray-300 dark:text-gray-600 text-xs">•</span>
+                      <span className="text-xs text-gray-500 dark:text-gray-400">
+                        {selectedLab.address ? `${selectedLab.address}, ` : ''}{selectedLab.state}
+                      </span>
+                </div>
             </div>
 
-            <div className="bg-white dark:bg-slate-900 rounded-3xl p-6 shadow-xl mb-6 transition-colors">
-              <div className="flex justify-between items-start mb-4">
-                <h2 className="text-2xl font-black text-[#1A005B] dark:text-blue-100 flex-1 mr-4">{selectedLab.name}</h2>
-                <div className={`w-3 h-3 rounded-full mt-2 shadow-[0_0_10px_rgba(0,0,0,0.3)] ${selectedLab.status === 'Active' ? 'bg-green-500 shadow-green-200' : 'bg-yellow-500 shadow-yellow-200'}`}></div>
-              </div>
-              
-              {selectedLab.lastUpdated && (
-                <div className="mb-4 text-xs text-right text-gray-400 italic">
-                  Last updated: {selectedLab.lastUpdated}
-                </div>
-              )}
-              
-              <div className="flex justify-center space-x-4 mb-6">
-                 <button 
+            <div className="space-y-6">
+               <div>
+                  <FieldLabel>About Facility</FieldLabel>
+                  <p className="text-sm font-medium text-gray-700 dark:text-gray-300 leading-relaxed">{selectedLab.detail}</p>
+               </div>
+
+               <div className="grid grid-cols-2 gap-4">
+                 <div>
+                    <FieldLabel>Contact Person</FieldLabel>
+                    <p className="font-bold text-gray-800 dark:text-gray-200">{selectedLab.contact || 'N/A'}</p>
+                 </div>
+                 <div>
+                    <FieldLabel>Phone</FieldLabel>
+                    <p className="font-bold text-gray-800 dark:text-gray-200">{selectedLab.phone || 'N/A'}</p>
+                 </div>
+               </div>
+               
+               {/* Detailed Stats */}
+               <div className="bg-gray-50 dark:bg-slate-800/50 rounded-xl p-4 border border-gray-100 dark:border-slate-800">
+                  <div className="space-y-2">
+                      <StatusDetailRow label="Volunteers" value={selectedLab.volunteerGender} />
+                      <StatusDetailRow label="Compensation" value={selectedLab.amount} />
+                      <StatusDetailRow label="Age Group" value={selectedLab.age} />
+                  </div>
+               </div>
+
+               <div>
+                 <FieldLabel>Screening Details</FieldLabel>
+                 <div className="text-sm text-gray-600 dark:text-gray-400 space-y-1">
+                    <p><span className="font-bold">Date:</span> {selectedLab.screeningDate || 'Contact for details'}</p>
+                    <p><span className="font-bold">Time:</span> {selectedLab.screeningTime || 'Contact for details'}</p>
+                 </div>
+               </div>
+               
+               <div>
+                 <FieldLabel>Requirements & Notes</FieldLabel>
+                 <p className="text-sm text-gray-600 dark:text-gray-400 whitespace-pre-line bg-blue-50 dark:bg-slate-800/50 p-3 rounded-lg border border-blue-100 dark:border-slate-800">
+                   {selectedLab.requirements || 'No specific requirements listed.'}
+                 </p>
+               </div>
+
+               <div className="flex gap-3 pt-2">
+                 <Button 
+                   fullWidth 
+                   onClick={() => window.location.href = `tel:${selectedLab.phone}`}
+                   className="flex-1"
+                 >
+                    {t.call}
+                 </Button>
+                 <Button 
+                    fullWidth 
+                    variant="outline" 
                     onClick={() => openGoogleMaps(selectedLab)}
-                    className="flex items-center space-x-2 bg-blue-500 text-white px-5 py-2 rounded-full font-bold shadow-lg shadow-blue-200 hover:bg-blue-600 active:scale-95 transition-all"
+                    className="flex-1"
                  >
-                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
-                    <span>{t.directions}</span>
-                 </button>
-                 <button 
-                    onClick={() => window.location.href = `tel:${selectedLab.phone || ''}`}
-                    className="flex items-center space-x-2 bg-green-500 text-white px-5 py-2 rounded-full font-bold shadow-lg shadow-green-200 hover:bg-green-600 active:scale-95 transition-all"
-                 >
-                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"></path></svg>
-                    <span>{t.call} Now</span>
-                 </button>
-              </div>
-
-              <div className="bg-blue-50/50 dark:bg-slate-800/50 rounded-2xl p-4 border border-blue-100 dark:border-slate-700 shadow-inner">
-                <div className="flex justify-end mb-2">
-                   <span className="text-xs font-bold text-[#007DA5] dark:text-blue-400 bg-white dark:bg-slate-800 px-2 py-1 rounded shadow-sm">{selectedLab.period1 ? selectedLab.period1.split('-')[2] : '2026'}</span>
-                </div>
-                
-                <DetailRow label={t.contactPerson} value={selectedLab.contact} />
-                <DetailRow label={t.contactNumber} value={selectedLab.phone} />
-                
-                <div className="my-2 border-t border-dashed border-gray-300 dark:border-slate-600"></div>
-
-                <DetailRow label="Volunteers" value={selectedLab.volunteerGender} />
-                <DetailRow label="In House" value={selectedLab.inHouse} />
-                <DetailRow label="Periods" value={selectedLab.periodCount} />
-                <DetailRow label="Condition" value={selectedLab.condition} />
-                <DetailRow label="Loss" value={selectedLab.lossMl} />
-                <DetailRow label="Ambulatory" value={selectedLab.ambulatory} />
-                <DetailRow label="BMI" value={selectedLab.bmi} />
-                <DetailRow label="Age" value={selectedLab.age} />
-                
-                <DetailRow label={t.amount} value={selectedLab.amount} isHighlight={true} />
-                
-                <div className="my-2 border-t border-dashed border-gray-300 dark:border-slate-600"></div>
-                
-                <DetailRow label="1st Period" value={selectedLab.period1} />
-                <DetailRow label="2nd Period" value={selectedLab.period2} />
-                <DetailRow label="3rd Period" value={selectedLab.period3} />
-                <DetailRow label="4th Period" value={selectedLab.period4 || 'None'} />
-              </div>
-
-              <div className="mt-6 p-4 bg-[#1A005B]/5 dark:bg-blue-900/20 rounded-xl border border-[#1A005B]/10 dark:border-blue-700/30">
-                <p className="text-[#1A005B] dark:text-blue-200 font-bold text-sm whitespace-pre-line leading-relaxed">
-                  {selectedLab.requirements || "Original Aadhar card, PAN Card compulsory\nNotes All India Net (OVIS) check and block"}
-                </p>
-              </div>
+                    {t.directions}
+                 </Button>
+               </div>
             </div>
+
           </div>
         </div>
       </>
@@ -805,20 +838,35 @@ const App: React.FC = () => {
 
   const renderNotifications = () => (
     <>
-      <Header title={t.notifications} showBack={true} />
-      <div className="px-6 space-y-4 pb-20">
-        {notifications.map(n => (
-          <div key={n.id} onClick={() => markNotificationAsRead(n.id)} className={`p-5 rounded-2xl border transition-all ${n.isRead ? 'bg-white dark:bg-slate-900 border-gray-100 dark:border-slate-800' : 'bg-blue-50 dark:bg-blue-900/10 border-blue-100 dark:border-blue-800 shadow-sm'}`}>
-            <div className="flex items-start space-x-3">
-              <div className={`mt-1 min-w-[10px] h-[10px] rounded-full ${n.type === 'alert' ? 'bg-red-500' : 'bg-[#007DA5]'}`}></div>
-              <div>
-                <h4 className={`font-bold text-sm mb-1 ${n.isRead ? 'text-gray-700 dark:text-gray-300' : 'text-[#1A005B] dark:text-blue-200'}`}>{n.title}</h4>
-                <p className="text-xs text-gray-500 dark:text-gray-400 mb-2 leading-relaxed">{n.message}</p>
-                <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wide">{n.timestamp}</span>
+      <Header title={t.notifications} showBack={true} showNotification={false} />
+      <div className="px-6 pb-24 overflow-y-auto h-[calc(100vh-140px)] custom-scrollbar">
+        {notifications.length === 0 ? (
+           <div className="text-center py-12 text-gray-400">
+             <p>No new notifications</p>
+           </div>
+        ) : (
+          <div className="space-y-4">
+            {notifications.map(notification => (
+              <div 
+                key={notification.id} 
+                onClick={() => markNotificationAsRead(notification.id)}
+                className={`p-4 rounded-2xl border transition-all ${
+                  notification.isRead 
+                  ? 'bg-white dark:bg-slate-900 border-gray-100 dark:border-slate-800 opacity-70' 
+                  : 'bg-white dark:bg-slate-900 border-[#007DA5]/20 shadow-sm border-l-4 border-l-[#007DA5]'
+                }`}
+              >
+                <div className="flex justify-between items-start mb-1">
+                  <h4 className={`text-sm font-bold ${notification.isRead ? 'text-gray-600 dark:text-gray-400' : 'text-[#1A005B] dark:text-blue-200'}`}>
+                    {notification.title}
+                  </h4>
+                  <span className="text-[10px] text-gray-400 font-medium">{notification.timestamp}</span>
+                </div>
+                <p className="text-xs text-gray-500 dark:text-gray-400 leading-relaxed">{notification.message}</p>
               </div>
-            </div>
+            ))}
           </div>
-        ))}
+        )}
       </div>
     </>
   );
@@ -829,7 +877,7 @@ const App: React.FC = () => {
       <div className="px-6 pb-24">
         <div className="flex justify-between items-center mb-6">
            <h3 className="text-lg font-bold text-[#1A005B] dark:text-blue-200">Managed {t.facilities}</h3>
-           <button onClick={() => { setFormData({}); setScreen('ADD_HUB'); }} className="p-2 bg-[#1A005B] text-white rounded-xl shadow-lg hover:shadow-xl transition-all active:scale-95">
+           <button onClick={() => { setFormData({}); setFacilityPassword(''); setConfirmFacilityPassword(''); setScreen('ADD_HUB'); }} className="p-2 bg-[#1A005B] text-white rounded-xl shadow-lg hover:shadow-xl transition-all active:scale-95">
              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4v16m8-8H4"></path></svg>
            </button>
         </div>
@@ -846,7 +894,7 @@ const App: React.FC = () => {
                     {lab.lastUpdated && <span className="text-[10px] text-green-600 font-medium">{lab.lastUpdated}</span>}
                   </p>
                 </div>
-                <button onClick={() => { setFormData(lab); setScreen('ADD_HUB'); }} className="text-[#007DA5] dark:text-blue-400 text-xs font-bold px-3 py-1 bg-blue-50 dark:bg-slate-800 rounded-lg hover:bg-blue-100 dark:hover:bg-slate-700 transition-colors">
+                <button onClick={() => { setFormData(lab); setFacilityPassword(''); setConfirmFacilityPassword(''); setScreen('ADD_HUB'); }} className="text-[#007DA5] dark:text-blue-400 text-xs font-bold px-3 py-1 bg-blue-50 dark:bg-slate-800 rounded-lg hover:bg-blue-100 dark:hover:bg-slate-700 transition-colors">
                   {t.updateDetail}
                 </button>
               </div>
@@ -902,7 +950,29 @@ const App: React.FC = () => {
              </div>
 
              <Input label="Facility Name" defaultValue={formData.name} onChange={e => setFormData({...formData, name: e.target.value})} />
-             <Input label="Location State" defaultValue={formData.state} onChange={e => setFormData({...formData, state: e.target.value})} />
+             
+             {/* State Dropdown */}
+             <div>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Location State</label>
+                <div className="relative">
+                  <select
+                    value={formData.state || State.Maharashtra}
+                    onChange={e => setFormData({...formData, state: e.target.value})}
+                    className="w-full px-4 py-3 bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all outline-none text-gray-800 dark:text-white appearance-none"
+                  >
+                    {STATES_LIST.map(s => (
+                      <option key={s} value={s}>{s}</option>
+                    ))}
+                  </select>
+                  <div className="absolute inset-y-0 right-0 flex items-center px-2 pointer-events-none">
+                    <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path></svg>
+                  </div>
+                </div>
+             </div>
+
+             {/* New City/Address Input */}
+             <Input label="City / Area" defaultValue={formData.address} placeholder="e.g. Andheri West, Mumbai" onChange={e => setFormData({...formData, address: e.target.value})} />
+
              <Input label="Status Report" defaultValue={formData.report} onChange={e => setFormData({...formData, report: e.target.value})} />
              <Input label="Clinical Notes" defaultValue={formData.detail} onChange={e => setFormData({...formData, detail: e.target.value})} />
              
@@ -962,10 +1032,46 @@ const App: React.FC = () => {
                 onChange={e => setFormData({...formData, requirements: e.target.value})}
               />
            </div>
+
+           {/* PASSWORD SECTION */}
+           <div className="bg-white dark:bg-slate-900 p-5 rounded-2xl shadow-sm border border-gray-100 dark:border-slate-800 space-y-4 transition-colors">
+             <h3 className="text-sm font-bold text-[#1A005B] dark:text-blue-200 mb-2 border-b dark:border-slate-800 pb-2">Security</h3>
+             
+             {!formData.id ? (
+               <div className="space-y-4">
+                 <Input 
+                   label="Set Facility Password" 
+                   type="password" 
+                   value={facilityPassword}
+                   onChange={e => setFacilityPassword(e.target.value)}
+                   placeholder="Create a password to secure this facility"
+                 />
+                 <Input 
+                   label="Confirm Password" 
+                   type="password" 
+                   value={confirmFacilityPassword}
+                   onChange={e => setConfirmFacilityPassword(e.target.value)}
+                   placeholder="Re-enter password"
+                 />
+                 <p className="text-xs text-gray-400">You will need this password to update or delete this facility in the future.</p>
+               </div>
+             ) : (
+               <div>
+                  <Input 
+                    label="Enter Facility Password to Save/Delete" 
+                    type="password" 
+                    value={facilityPassword}
+                    onChange={e => setFacilityPassword(e.target.value)}
+                    placeholder="Required for any changes"
+                  />
+                  <p className="text-xs text-yellow-600 dark:text-yellow-500 font-medium">Authentication required to verify updates.</p>
+               </div>
+             )}
+           </div>
            
            <div className="flex flex-col gap-3">
              <Button fullWidth type="submit" size="lg">
-               {formData.id ? 'Save Updates' : 'Create Facility'}
+               {formData.id ? 'Verify & Save Updates' : 'Create Facility'}
              </Button>
              
              {formData.id && (
@@ -975,7 +1081,7 @@ const App: React.FC = () => {
                  fullWidth 
                  onClick={() => deleteLab(formData.id!)}
                >
-                 Delete Facility
+                 Verify & Delete Facility
                </Button>
              )}
            </div>

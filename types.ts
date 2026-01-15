@@ -8,12 +8,14 @@ export interface Lab {
   id: string;
   name: string;
   state: string;
+  address?: string;
   status: 'Active' | 'Pending' | 'Completed';
   detail: string;
   report: string;
   contact: string;
   phone: string;
   logo?: string;
+  password?: string;
   // Clinical/Operational Parameters
   volunteerGender?: string;
   periodCount?: string;

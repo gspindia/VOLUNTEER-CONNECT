@@ -384,7 +384,27 @@ export const MOCK_LABS: Lab[] = [
     phone: '+91 9876543212',
     lastUpdated: '10/01/2026 09:00 AM',
     password: '1234'
-  }
+  },
+  // TELANGANA FACILITIES ADDED FROM LIST
+  { id: 'ts-1', name: 'Admerus', state: State.Telangana, status: 'Active', detail: 'Admerus Biosciences', report: 'Screening Available', contact: 'Front Desk', phone: '+91 40 1234 5678', password: '1234' },
+  { id: 'ts-2', name: 'Advity', state: State.Telangana, status: 'Pending', detail: 'Advity Research', report: 'Pending', contact: 'Admin', phone: '+91 40 2345 6789', password: '1234' },
+  { id: 'ts-3', name: 'Aizent', state: State.Telangana, status: 'Active', detail: 'Aizent Pharmaceuticals', report: 'In Progress', contact: 'Study Coordinator', phone: '+91 40 3456 7890', password: '1234' },
+  { id: 'ts-4', name: 'Aizent Ameerpet', state: State.Telangana, status: 'Active', detail: 'Aizent Ameerpet Branch', report: 'Screening Open', contact: 'Branch Manager', phone: '+91 40 4567 8901', password: '1234' },
+  { id: 'ts-5', name: 'Anacipher', state: State.Telangana, status: 'Pending', detail: 'Anacipher Clinical Research', report: 'Pending', contact: 'Admin', phone: '+91 40 5678 9012', password: '1234' },
+  { id: 'ts-6', name: 'Axis Hy\'bad', state: State.Telangana, status: 'Active', detail: 'Axis Clinicals Hyderabad', report: 'Screening Open', contact: 'Reception', phone: '+91 40 6789 0123', password: '1234' },
+  { id: 'ts-7', name: 'Clians', state: State.Telangana, status: 'Pending', detail: 'Clians Labs', report: 'Pending', contact: 'Admin', phone: '+91 40 7890 1234', password: '1234' },
+  { id: 'ts-8', name: 'Clinispec', state: State.Telangana, status: 'Active', detail: 'Clinispec Research', report: 'Status OK', contact: 'Manager', phone: '+91 40 8901 2345', password: '1234' },
+  { id: 'ts-9', name: 'Clinsync', state: State.Telangana, status: 'Active', detail: 'Clinsync Clinical Research', report: 'Screening Open', contact: 'Coordinator', phone: '+91 40 9012 3456', password: '1234' },
+  { id: 'ts-10', name: 'CR Bio', state: State.Telangana, status: 'Pending', detail: 'CR Bio (Cohance)', report: 'Pending', contact: 'Admin', phone: '+91 40 0123 4567', password: '1234' },
+  { id: 'ts-11', name: 'Glogen', state: State.Telangana, status: 'Active', detail: 'Glogen Pathology', report: 'Reports Ready', contact: 'Lab Tech', phone: '+91 40 1122 3344', password: '1234' },
+  { id: 'ts-12', name: 'Indi Global', state: State.Telangana, status: 'Pending', detail: 'Indi Global Research', report: 'Pending', contact: 'Admin', phone: '+91 40 2233 4455', password: '1234' },
+  { id: 'ts-13', name: 'Jeevan', state: State.Telangana, status: 'Active', detail: 'Jeevan Scientific', report: 'Screening Open', contact: 'Helpdesk', phone: '+91 40 3344 5566', password: '1234' },
+  { id: 'ts-14', name: 'Noah', state: State.Telangana, status: 'Pending', detail: 'Noah Clinicals', report: 'Pending', contact: 'Admin', phone: '+91 40 4455 6677', password: '1234' },
+  { id: 'ts-15', name: 'QPS', state: State.Telangana, status: 'Active', detail: 'QPS Bioserve', report: 'Screening Open', contact: 'Recruiter', phone: '+91 40 5566 7788', password: '1234' },
+  { id: 'ts-16', name: 'Rathod Hydrbd', state: State.Telangana, status: 'Pending', detail: 'Rathod Labs Hyderabad', report: 'Pending', contact: 'Admin', phone: '+91 40 6677 8899', password: '1234' },
+  { id: 'ts-17', name: 'Sipra', state: State.Telangana, status: 'Active', detail: 'Sipra Labs', report: 'Testing Ongoing', contact: 'Manager', phone: '+91 40 7788 9900', password: '1234' },
+  { id: 'ts-18', name: 'Vimta', state: State.Telangana, status: 'Active', detail: 'Vimta Labs', report: 'Screening Open', contact: 'Helpdesk', phone: '+91 40 8899 0011', password: '1234' },
+  { id: 'ts-19', name: 'Zenrise', state: State.Telangana, status: 'Active', detail: 'Zenrise Clinical Research', report: 'Screening Open', contact: 'Coordinator', phone: '+91 40 9900 1122', password: '1234' }
 ];
 
 export const MOCK_NOTIFICATIONS: AppNotification[] = [

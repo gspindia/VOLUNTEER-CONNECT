@@ -263,7 +263,7 @@ const App: React.FC = () => {
     </div>
   );
 
-  const Header = ({ title, showBack = false, showLang = true, showNotification = true }) => (
+  const Header = ({ title, showBack = false, showLang = true, showNotification = true }: { title: string, showBack?: boolean, showLang?: boolean, showNotification?: boolean }) => (
     <div className="px-6 pt-12 pb-6 bg-white dark:bg-slate-900 sticky top-0 z-30 shadow-[0_4px_20px_-10px_rgba(0,0,0,0.05)] rounded-b-[2rem] transition-colors duration-300">
       <div className="flex justify-between items-center mb-4">
         <div className="flex items-center space-x-3">
@@ -284,7 +284,6 @@ const App: React.FC = () => {
         </div>
         
         <div className="flex items-center space-x-2">
-           {/* Theme Toggle */}
            <button 
             onClick={() => setDarkMode(!darkMode)}
             className="p-2 rounded-full hover:bg-gray-50 dark:hover:bg-slate-800 text-gray-500 dark:text-yellow-400 transition-colors"
@@ -387,7 +386,7 @@ const App: React.FC = () => {
         </div>
       </div>
       <div className="mt-auto pt-4 flex justify-between items-center px-4">
-        <div className="w-8"></div> {/* Spacer */}
+        <div className="w-8"></div>
         <LanguageSelector direction="up" />
         <button 
           onClick={() => setDarkMode(!darkMode)}
@@ -481,356 +480,137 @@ const App: React.FC = () => {
             <Button fullWidth onClick={() => setScreen('LOGIN')}>
                {t.sendOtp}
             </Button>
-            
-            <button 
-              onClick={() => setScreen('LOGIN')}
-              className="w-full py-3 text-sm font-bold text-gray-400 hover:text-[#1A005B] dark:hover:text-blue-200 transition-colors"
-            >
-              {t.backToLogin}
-            </button>
          </div>
-      </div>
-       <div className="mt-auto pt-4 flex justify-center">
-        <LanguageSelector direction="up" />
+         <div className="mt-8">
+            <button onClick={() => setScreen('LOGIN')} className="text-sm font-bold text-[#1A005B] dark:text-blue-200 hover:underline">{t.backToLogin}</button>
+         </div>
       </div>
     </div>
   );
 
   const renderMain = () => (
     <>
-      <Header 
-        title={`${getGreeting()},\n${user?.name.split(' ')[0]}`} 
-        showBack={false}
-      />
-      <div className="px-6 pb-24 overflow-y-auto h-[calc(100vh-140px)] custom-scrollbar">
-        <div className="mb-6 bg-gradient-to-br from-[#1A005B] to-[#007DA5] p-6 rounded-[2rem] text-white relative overflow-hidden shadow-xl">
-          <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full blur-2xl -mr-16 -mt-16"></div>
-          <div className="relative z-10">
-            <p className="text-white/70 text-sm font-medium mb-1">Your Identity</p>
-            <h3 className="text-2xl font-bold mb-4">{user?.volNo}</h3>
-            <div className="flex items-center space-x-2 text-sm bg-white/20 w-fit px-3 py-1 rounded-full backdrop-blur-sm">
-              <span className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></span>
-              <span>Active Volunteer</span>
+      <Header title={t.explore} />
+      <div className="p-6 grid grid-cols-2 gap-4 pb-24">
+        {STATES_LIST.map((st) => (
+          <button
+            key={st}
+            onClick={() => {
+              setSelectedState(st);
+              setScreen('LAB_LIST');
+            }}
+            className="bg-white dark:bg-slate-900 p-6 rounded-[2rem] shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 aspect-square flex flex-col items-center justify-center gap-4 group border border-gray-100 dark:border-slate-800"
+          >
+            <div className="w-12 h-12 rounded-full bg-gradient-to-br from-[#1A005B] to-[#007DA5] flex items-center justify-center text-white font-bold text-xl shadow-lg group-hover:scale-110 transition-transform">
+              {st.charAt(0)}
             </div>
-          </div>
-        </div>
-
-        <h3 className="text-lg font-bold text-[#1A005B] dark:text-blue-200 mb-4 flex items-center">
-          <span className="w-1 h-6 bg-[#007DA5] rounded-full mr-3"></span>
-          {t.explore}
-        </h3>
-        
-        <div className="grid grid-cols-2 gap-4">
-          {STATES_LIST.map((state) => (
-            <button
-              key={state}
-              onClick={() => {
-                setSelectedState(state);
-                setScreen('LAB_LIST');
-              }}
-              className="bg-white dark:bg-slate-900 p-4 rounded-2xl border border-gray-100 dark:border-slate-800 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-300 text-left group"
-            >
-              <div className="w-10 h-10 rounded-full bg-blue-50 dark:bg-slate-800 text-[#007DA5] dark:text-blue-400 flex items-center justify-center mb-3 group-hover:bg-[#007DA5] group-hover:text-white transition-colors">
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
-              </div>
-              <h4 className="font-bold text-gray-800 dark:text-gray-100 text-sm">{state}</h4>
-              <p className="text-xs text-gray-400 mt-1">{labs.filter(l => l.state === state).length} {t.facilities}</p>
-            </button>
-          ))}
-        </div>
+            <span className="font-bold text-[#1A005B] dark:text-blue-100 text-sm">{st}</span>
+          </button>
+        ))}
       </div>
     </>
   );
 
-  const StatusDetailRow = ({ label, value }: { label: string, value?: string }) => {
-    if (!value) return null;
-    return (
-      <div className="flex items-start mb-1 text-sm">
-         <span className="text-gray-300 dark:text-gray-600 mr-2 font-bold">➔</span>
-         <span className="font-bold text-gray-600 dark:text-gray-400 w-24 shrink-0">{label}</span>
-         <span className="text-gray-300 dark:text-gray-600 mx-2 font-bold">-</span>
-         <span className="font-bold text-[#007DA5] dark:text-blue-400 flex-1">{value}</span>
-      </div>
-    );
-  };
-
-  const renderLabList = () => {
-    const filteredLabs = labs.filter(l => l.state === selectedState);
-    
-    return (
-      <>
-        <Header 
-          title={`${selectedState}\n${t.facilities}`}
-          showBack={true}
-        />
-        <div className="px-6 pb-6">
-          <div className="flex p-1 bg-white dark:bg-slate-900 border border-gray-100 dark:border-slate-800 rounded-xl mb-6 shadow-sm transition-colors">
-            <button 
-              className={`flex-1 py-2 text-xs font-bold rounded-lg transition-all ${activeListTab === 'STATUS' ? 'bg-[#1A005B] text-white shadow-md' : 'text-gray-400 hover:text-gray-600 dark:hover:text-gray-300'}`}
-              onClick={() => setActiveListTab('STATUS')}
-            >
-              {t.liveStatus}
-            </button>
-            <button 
-              className={`flex-1 py-2 text-xs font-bold rounded-lg transition-all ${activeListTab === 'DETAILS' ? 'bg-[#1A005B] text-white shadow-md' : 'text-gray-400 hover:text-gray-600 dark:hover:text-gray-300'}`}
-              onClick={() => setActiveListTab('DETAILS')}
-            >
-              {t.allDetails}
-            </button>
-          </div>
-
-          <div className="space-y-4 overflow-y-auto h-[calc(100vh-220px)] custom-scrollbar pb-10">
-            {filteredLabs.length === 0 ? (
-              <div className="text-center py-12 text-gray-400">
-                <p>No facilities found in this region.</p>
-              </div>
-            ) : (
-              activeListTab === 'STATUS' ? (
-                // Detailed Card View for Live Status Tab - THEMED BACK TO ORIGINAL
-                filteredLabs.map(lab => (
-                  <div key={lab.id} className="bg-white dark:bg-slate-900 rounded-2xl p-5 border border-gray-100 dark:border-slate-800 shadow-sm hover:shadow-md transition-all relative overflow-hidden">
-                    {/* Header */}
-                    <div className="flex justify-between items-start mb-4 border-b border-gray-50 dark:border-slate-800 pb-2">
-                        <div className="flex-1">
-                          <h3 className="text-[#1A005B] dark:text-blue-200 font-black text-lg uppercase tracking-tight">{lab.name}</h3>
-                          <span className="text-[#007DA5] dark:text-blue-300 font-bold text-xs bg-blue-50 dark:bg-blue-900/20 px-2 py-1 rounded-lg">{lab.lastUpdated ? lab.lastUpdated.split(' ')[0] : '15-01-2026'}</span>
-                        </div>
-                        
-                        <div className="flex items-center space-x-2">
-                          <button 
-                            onClick={(e) => {
-                               e.stopPropagation();
-                               openGoogleMaps(lab);
-                            }}
-                            className="w-10 h-10 flex items-center justify-center rounded-full bg-blue-50 dark:bg-slate-800 text-[#007DA5] dark:text-blue-400 hover:bg-blue-100 dark:hover:bg-slate-700 shadow-sm transition-colors active:scale-95"
-                          >
-                             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
-                          </button>
-                          
-                          <button 
-                            onClick={(e) => {
-                               e.stopPropagation();
-                               window.location.href = `tel:${lab.phone || ''}`;
-                            }}
-                            className="w-10 h-10 flex items-center justify-center rounded-full bg-green-100 dark:bg-green-900/20 text-green-600 dark:text-green-400 hover:bg-green-200 dark:hover:bg-green-900/40 shadow-sm transition-colors active:scale-95"
-                          >
-                             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"></path></svg>
-                          </button>
-                        </div>
-                    </div>
-                    
-                    {/* Body */}
-                    <div className="space-y-1">
-                      <StatusDetailRow label="Volunteers" value={lab.volunteerGender} />
-                      <StatusDetailRow label="In House" value={lab.inHouse} />
-                      <StatusDetailRow label="Periods" value={lab.periodCount} />
-                      <StatusDetailRow label="Condition" value={lab.condition} />
-                      <StatusDetailRow label="Loss" value={lab.lossMl} />
-                      <StatusDetailRow label="Ambulatory" value={lab.ambulatory} />
-                      <StatusDetailRow label="BMI" value={lab.bmi} />
-                      <StatusDetailRow label="Age" value={lab.age} />
-                    </div>
-                    
-                    {/* Amount */}
-                    <div className="flex items-center bg-[#1A005B]/5 dark:bg-blue-900/20 border border-[#1A005B]/10 dark:border-blue-700/30 rounded-xl px-3 py-2 my-3">
-                        <span className="text-gray-400 dark:text-gray-500 mr-2 font-bold">➔</span>
-                        <span className="font-bold text-[#1A005B] dark:text-blue-200 w-24 shrink-0">{t.amount}</span>
-                         <span className="mx-2"></span>
-                        <div className="flex items-center text-[#007DA5] dark:text-blue-400 font-black uppercase text-sm">
-                            {lab.amount || 'N/A'}
-                        </div>
-                    </div>
-
-                    {/* Periods List */}
-                    <div className="space-y-1 mb-4">
-                      <StatusDetailRow label="1st Period" value={lab.period1} />
-                      <StatusDetailRow label="2nd Period" value={lab.period2} />
-                      <StatusDetailRow label="3rd Period" value={lab.period3} />
-                      <StatusDetailRow label="4th Period" value={lab.period4} />
-                    </div>
-
-                    {/* Description / Notes */}
-                    <div className="pt-3 border-t border-gray-100 dark:border-slate-800 bg-gray-50/50 dark:bg-slate-950/30 -mx-5 -mb-5 p-5">
-                         <p className="text-gray-600 dark:text-gray-400 font-medium text-sm whitespace-pre-line leading-relaxed">
-                            {lab.requirements}
-                         </p>
-                    </div>
-
-                  </div>
-                ))
-              ) : (
-                // Standard Detail List Item (Summary)
-                filteredLabs.map(lab => (
-                  <div 
-                    key={lab.id} 
-                    onClick={() => { setSelectedLabId(lab.id); setScreen('LAB_DETAIL'); }}
-                    className="bg-white dark:bg-slate-900 p-4 rounded-2xl border border-gray-100 dark:border-slate-800 shadow-sm hover:shadow-md transition-all cursor-pointer group active:scale-[0.98]"
-                  >
-                    <div className="flex items-start gap-4">
-                      {/* Logo Placeholder */}
-                      <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-slate-800 dark:to-slate-700 border border-indigo-100 dark:border-slate-600 flex items-center justify-center flex-shrink-0 shadow-sm group-hover:shadow-md transition-shadow overflow-hidden">
-                        {lab.logo ? (
-                            <img src={lab.logo} alt={lab.name} className="w-full h-full object-cover" />
-                        ) : (
-                            <span className="text-xl font-black text-[#1A005B] dark:text-blue-200 opacity-40">{lab.name.charAt(0)}</span>
-                        )}
-                      </div>
-
-                      {/* Content Container */}
-                      <div className="flex-1 min-w-0 pt-0.5 relative">
-                        <div className="flex justify-between items-start mb-1 pr-24">
-                          <h3 className="font-bold text-[#1A005B] dark:text-blue-100 text-base leading-tight group-hover:text-[#007DA5] dark:group-hover:text-blue-300 transition-colors truncate pr-2">{lab.name}</h3>
-                          <span className={`px-2 py-0.5 rounded text-[10px] font-black uppercase tracking-wider flex-shrink-0 ${
-                            lab.status === 'Active' ? 'bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400' :
-                            lab.status === 'Pending' ? 'bg-yellow-100 dark:bg-yellow-900/30 text-yellow-700 dark:text-yellow-400' :
-                            'bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400'
-                          }`}>
-                            {lab.status}
-                          </span>
-                        </div>
-                        
-                        {/* Action Buttons */}
-                        <div className="absolute right-0 top-6 flex space-x-2 z-10">
-                           <button 
-                            onClick={(e) => {
-                               e.stopPropagation();
-                               openGoogleMaps(lab);
-                            }}
-                            className="w-8 h-8 flex items-center justify-center rounded-full bg-blue-50 dark:bg-slate-800 text-[#007DA5] dark:text-blue-400 hover:bg-blue-500 hover:text-white dark:hover:bg-blue-500 transition-all shadow-sm"
-                          >
-                             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
-                          </button>
-                           <button 
-                            onClick={(e) => {
-                               e.stopPropagation();
-                               window.location.href = `tel:${lab.phone || ''}`;
-                            }}
-                            className="w-8 h-8 flex items-center justify-center rounded-full bg-green-50 dark:bg-green-900/20 text-green-600 dark:text-green-400 hover:bg-green-500 hover:text-white dark:hover:bg-green-500 transition-all shadow-sm"
-                          >
-                             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"></path></svg>
-                          </button>
-                        </div>
-                        
-                        <p className="text-xs text-gray-500 dark:text-gray-400 line-clamp-1 mb-3 font-medium mr-16">{lab.detail}</p>
-                        
-                        <div className="flex justify-between items-center border-t border-gray-50 dark:border-slate-800 pt-2">
-                          <div className="flex items-center text-[10px] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-wide">
-                            <svg className="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
-                            {lab.address ? `${lab.address}, ${lab.state}` : lab.state}
-                          </div>
-                          <span className="text-[10px] font-bold text-[#007DA5] dark:text-blue-400 group-hover:translate-x-1 transition-transform flex items-center uppercase tracking-wide">
-                            {t.view} <svg className="w-3 h-3 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7"></path></svg>
-                          </span>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                ))
-              )
-            )}
-          </div>
+  const renderLabList = () => (
+    <>
+      <Header title={selectedState || 'Facilities'} showBack={true} />
+      <div className="px-6 mb-6">
+        <div className="bg-gray-100 dark:bg-slate-900 p-1 rounded-2xl flex">
+          <button 
+             onClick={() => setActiveListTab('STATUS')}
+             className={`flex-1 py-3 rounded-xl text-xs font-bold transition-all ${activeListTab === 'STATUS' ? 'bg-white dark:bg-slate-800 text-[#1A005B] dark:text-blue-200 shadow-sm' : 'text-gray-400'}`}
+          >
+            {t.liveStatus}
+          </button>
+          <button 
+             onClick={() => setActiveListTab('DETAILS')}
+             className={`flex-1 py-3 rounded-xl text-xs font-bold transition-all ${activeListTab === 'DETAILS' ? 'bg-white dark:bg-slate-800 text-[#1A005B] dark:text-blue-200 shadow-sm' : 'text-gray-400'}`}
+          >
+            {t.allDetails}
+          </button>
         </div>
-      </>
-    );
-  };
+      </div>
+
+      <div className="px-6 pb-24 space-y-4">
+        {labs.filter(l => l.state === selectedState).map(lab => (
+          <div key={lab.id} onClick={() => { setSelectedLabId(lab.id); setScreen('LAB_DETAIL'); }} className="bg-white dark:bg-slate-900 p-5 rounded-3xl shadow-sm border border-gray-100 dark:border-slate-800 active:scale-[0.98] transition-all">
+             <div className="flex justify-between items-start mb-2">
+                <div>
+                   <h3 className="font-bold text-[#1A005B] dark:text-blue-100">{lab.name}</h3>
+                   <p className="text-xs text-gray-400 font-bold">{lab.contact}</p>
+                </div>
+                <span className={`px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider ${
+                  lab.status === 'Active' ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400' :
+                  lab.status === 'Pending' ? 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400' :
+                  'bg-gray-100 text-gray-600 dark:bg-slate-800 dark:text-gray-400'
+                }`}>
+                  {lab.status}
+                </span>
+             </div>
+             {activeListTab === 'DETAILS' && (
+                <div className="mt-4 pt-4 border-t border-gray-50 dark:border-slate-800 grid grid-cols-2 gap-4">
+                   <div><FieldLabel>{t.amount}</FieldLabel><p className="font-bold text-sm dark:text-gray-300">{lab.amount}</p></div>
+                   <div><FieldLabel>{t.facilities}</FieldLabel><p className="font-bold text-sm dark:text-gray-300">{lab.inHouse}</p></div>
+                </div>
+             )}
+          </div>
+        ))}
+      </div>
+    </>
+  );
 
   const renderLabDetail = () => {
     if (!selectedLab) return null;
-
     return (
       <>
-        <Header 
-          title={selectedLab.name}
-          showBack={true}
-        />
-        <div className="px-6 pb-24 overflow-y-auto h-[calc(100vh-140px)] custom-scrollbar">
-          <div className="bg-white dark:bg-slate-900 rounded-3xl p-6 shadow-sm border border-gray-100 dark:border-slate-800 transition-colors">
-            
-            <div className="flex flex-col items-center mb-6">
-                <div className="w-24 h-24 rounded-full bg-gray-100 dark:bg-slate-800 border-4 border-white dark:border-slate-700 shadow-lg flex items-center justify-center overflow-hidden mb-4">
-                     {selectedLab.logo ? (
-                         <img src={selectedLab.logo} alt={selectedLab.name} className="w-full h-full object-cover" />
-                     ) : (
-                         <span className="text-3xl font-black text-[#1A005B] dark:text-blue-200 opacity-40">{selectedLab.name.charAt(0)}</span>
-                     )}
-                </div>
-                <h2 className="text-xl font-black text-[#1A005B] dark:text-blue-100 text-center mb-1">{selectedLab.name}</h2>
-                <div className="flex items-center space-x-2">
-                     <span className={`px-2 py-0.5 rounded text-[10px] font-black uppercase tracking-wider ${
-                        selectedLab.status === 'Active' ? 'bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400' :
-                        selectedLab.status === 'Pending' ? 'bg-yellow-100 dark:bg-yellow-900/30 text-yellow-700 dark:text-yellow-400' :
-                        'bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400'
-                      }`}>
-                        {selectedLab.status}
-                      </span>
-                      <span className="text-gray-300 dark:text-gray-600 text-xs">•</span>
-                      <span className="text-xs text-gray-500 dark:text-gray-400">
-                        {selectedLab.address ? `${selectedLab.address}, ` : ''}{selectedLab.state}
-                      </span>
-                </div>
-            </div>
+        <Header title={selectedLab.name} showBack={true} />
+        <div className="px-6 pb-24 space-y-6">
+           {selectedLab.logo && (
+              <div className="flex justify-center my-4">
+                 <img src={selectedLab.logo} alt="Logo" className="h-24 object-contain" />
+              </div>
+           )}
+           
+           <div className="bg-white dark:bg-slate-900 p-6 rounded-3xl shadow-sm border border-gray-100 dark:border-slate-800 space-y-4">
+              <div className="flex justify-between items-center">
+                 <span className={`px-4 py-2 rounded-full text-xs font-black uppercase tracking-wider ${
+                    selectedLab.status === 'Active' ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400' : 'bg-gray-100 text-gray-600 dark:bg-slate-800 dark:text-gray-400'
+                 }`}>{selectedLab.status}</span>
+                 <span className="text-xs font-bold text-gray-400">{selectedLab.lastUpdated}</span>
+              </div>
+              
+              <div className="grid grid-cols-2 gap-6">
+                 <div><FieldLabel>Volunteer Gender</FieldLabel><p className="font-medium dark:text-gray-200">{selectedLab.volunteerGender}</p></div>
+                 <div><FieldLabel>Age Limit</FieldLabel><p className="font-medium dark:text-gray-200">{selectedLab.age}</p></div>
+                 <div><FieldLabel>BMI Range</FieldLabel><p className="font-medium dark:text-gray-200">{selectedLab.bmi}</p></div>
+                 <div><FieldLabel>Blood Loss</FieldLabel><p className="font-medium dark:text-gray-200">{selectedLab.lossMl}</p></div>
+                 <div><FieldLabel>In-House Stay</FieldLabel><p className="font-medium dark:text-gray-200">{selectedLab.inHouse}</p></div>
+                 <div><FieldLabel>Compensation</FieldLabel><p className="font-bold text-[#007DA5] dark:text-blue-400 text-lg">{selectedLab.amount}</p></div>
+              </div>
+           </div>
 
-            <div className="space-y-6">
-               <div>
-                  <FieldLabel>About Facility</FieldLabel>
-                  <p className="text-sm font-medium text-gray-700 dark:text-gray-300 leading-relaxed">{selectedLab.detail}</p>
-               </div>
-
-               <div className="grid grid-cols-2 gap-4">
-                 <div>
-                    <FieldLabel>Contact Person</FieldLabel>
-                    <p className="font-bold text-gray-800 dark:text-gray-200">{selectedLab.contact || 'N/A'}</p>
-                 </div>
-                 <div>
-                    <FieldLabel>Phone</FieldLabel>
-                    <p className="font-bold text-gray-800 dark:text-gray-200">{selectedLab.phone || 'N/A'}</p>
-                 </div>
-               </div>
-               
-               {/* Detailed Stats */}
-               <div className="bg-gray-50 dark:bg-slate-800/50 rounded-xl p-4 border border-gray-100 dark:border-slate-800">
-                  <div className="space-y-2">
-                      <StatusDetailRow label="Volunteers" value={selectedLab.volunteerGender} />
-                      <StatusDetailRow label="Compensation" value={selectedLab.amount} />
-                      <StatusDetailRow label="Age Group" value={selectedLab.age} />
+           <div className="bg-white dark:bg-slate-900 p-6 rounded-3xl shadow-sm border border-gray-100 dark:border-slate-800">
+               <FieldLabel>Requirements</FieldLabel>
+               <p className="text-sm leading-relaxed whitespace-pre-line text-gray-600 dark:text-gray-300">{selectedLab.requirements || selectedLab.detail}</p>
+           </div>
+           
+           <div className="bg-gradient-to-br from-[#1A005B] to-[#007DA5] p-6 rounded-3xl text-white shadow-lg">
+               <h3 className="font-bold mb-4">{t.contact}</h3>
+               <div className="space-y-3">
+                  <div className="flex items-center gap-3">
+                     <div className="p-2 bg-white/20 rounded-full"><svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg></div>
+                     <span className="font-medium">{selectedLab.contact}</span>
+                  </div>
+                  <div className="flex items-center gap-3">
+                     <div className="p-2 bg-white/20 rounded-full"><svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"></path></svg></div>
+                     <span className="font-medium">{selectedLab.phone}</span>
                   </div>
                </div>
-
-               <div>
-                 <FieldLabel>Screening Details</FieldLabel>
-                 <div className="text-sm text-gray-600 dark:text-gray-400 space-y-1">
-                    <p><span className="font-bold">Date:</span> {selectedLab.screeningDate || 'Contact for details'}</p>
-                    <p><span className="font-bold">Time:</span> {selectedLab.screeningTime || 'Contact for details'}</p>
-                 </div>
+               <div className="mt-6 flex gap-3">
+                  <button onClick={() => window.open(`tel:${selectedLab.phone}`)} className="flex-1 bg-white text-[#1A005B] py-3 rounded-xl font-bold text-sm hover:bg-gray-50 transition-colors">{t.call}</button>
+                  <button onClick={() => openGoogleMaps(selectedLab)} className="flex-1 bg-[#1A005B]/50 border border-white/20 text-white py-3 rounded-xl font-bold text-sm hover:bg-[#1A005B]/70 transition-colors">{t.directions}</button>
                </div>
-               
-               <div>
-                 <FieldLabel>Requirements & Notes</FieldLabel>
-                 <p className="text-sm text-gray-600 dark:text-gray-400 whitespace-pre-line bg-blue-50 dark:bg-slate-800/50 p-3 rounded-lg border border-blue-100 dark:border-slate-800">
-                   {selectedLab.requirements || 'No specific requirements listed.'}
-                 </p>
-               </div>
-
-               <div className="flex gap-3 pt-2">
-                 <Button 
-                   fullWidth 
-                   onClick={() => window.location.href = `tel:${selectedLab.phone}`}
-                   className="flex-1"
-                 >
-                    {t.call}
-                 </Button>
-                 <Button 
-                    fullWidth 
-                    variant="outline" 
-                    onClick={() => openGoogleMaps(selectedLab)}
-                    className="flex-1"
-                 >
-                    {t.directions}
-                 </Button>
-               </div>
-            </div>
-
-          </div>
+           </div>
         </div>
       </>
     );
@@ -838,260 +618,136 @@ const App: React.FC = () => {
 
   const renderNotifications = () => (
     <>
-      <Header title={t.notifications} showBack={true} showNotification={false} />
-      <div className="px-6 pb-24 overflow-y-auto h-[calc(100vh-140px)] custom-scrollbar">
-        {notifications.length === 0 ? (
-           <div className="text-center py-12 text-gray-400">
-             <p>No new notifications</p>
-           </div>
-        ) : (
-          <div className="space-y-4">
-            {notifications.map(notification => (
-              <div 
-                key={notification.id} 
-                onClick={() => markNotificationAsRead(notification.id)}
-                className={`p-4 rounded-2xl border transition-all ${
-                  notification.isRead 
-                  ? 'bg-white dark:bg-slate-900 border-gray-100 dark:border-slate-800 opacity-70' 
-                  : 'bg-white dark:bg-slate-900 border-[#007DA5]/20 shadow-sm border-l-4 border-l-[#007DA5]'
-                }`}
-              >
-                <div className="flex justify-between items-start mb-1">
-                  <h4 className={`text-sm font-bold ${notification.isRead ? 'text-gray-600 dark:text-gray-400' : 'text-[#1A005B] dark:text-blue-200'}`}>
-                    {notification.title}
-                  </h4>
-                  <span className="text-[10px] text-gray-400 font-medium">{notification.timestamp}</span>
-                </div>
-                <p className="text-xs text-gray-500 dark:text-gray-400 leading-relaxed">{notification.message}</p>
-              </div>
-            ))}
-          </div>
-        )}
-      </div>
+       <Header title={t.notifications} showBack={true} showNotification={false} />
+       <div className="px-6 space-y-4">
+          {notifications.length === 0 ? (
+             <div className="text-center py-10 text-gray-400">{t.notifications} empty</div>
+          ) : (
+             notifications.map(n => (
+               <div key={n.id} className={`p-4 rounded-2xl border transition-all ${n.isRead ? 'bg-white dark:bg-slate-900 border-gray-100 dark:border-slate-800' : 'bg-blue-50 dark:bg-blue-900/20 border-blue-100 dark:border-blue-800'}`}>
+                  <div className="flex justify-between items-start mb-1">
+                     <h4 className="font-bold text-[#1A005B] dark:text-blue-100">{n.title}</h4>
+                     <span className="text-[10px] text-gray-400 font-bold">{n.timestamp}</span>
+                  </div>
+                  <p className="text-sm text-gray-600 dark:text-gray-300 leading-relaxed mb-3">{n.message}</p>
+                  {!n.isRead && (
+                    <button onClick={() => markNotificationAsRead(n.id)} className="text-xs font-bold text-[#007DA5] hover:underline">Mark as read</button>
+                  )}
+               </div>
+             ))
+          )}
+       </div>
     </>
   );
 
   const renderClientDashboard = () => (
     <>
       <Header title={t.adminDashboard} showNotification={false} />
-      <div className="px-6 pb-24">
-        <div className="flex justify-between items-center mb-6">
-           <h3 className="text-lg font-bold text-[#1A005B] dark:text-blue-200">Managed {t.facilities}</h3>
-           <button onClick={() => { setFormData({}); setFacilityPassword(''); setConfirmFacilityPassword(''); setScreen('ADD_HUB'); }} className="p-2 bg-[#1A005B] text-white rounded-xl shadow-lg hover:shadow-xl transition-all active:scale-95">
-             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4v16m8-8H4"></path></svg>
-           </button>
-        </div>
-
-        <div className="space-y-4">
-          {labs.map(lab => (
-            <div key={lab.id} className="bg-white dark:bg-slate-900 p-5 rounded-2xl border border-gray-100 dark:border-slate-800 shadow-sm hover:shadow-lg transition-all">
-              <div className="flex justify-between items-start mb-4">
-                <div>
-                  <h4 className="font-bold text-[#1A005B] dark:text-blue-200">{lab.name}</h4>
-                  <p className="text-xs text-gray-400">
-                    {lab.state} 
-                    {lab.lastUpdated && <span className="text-gray-300 mx-1">•</span>}
-                    {lab.lastUpdated && <span className="text-[10px] text-green-600 font-medium">{lab.lastUpdated}</span>}
-                  </p>
-                </div>
-                <button onClick={() => { setFormData(lab); setFacilityPassword(''); setConfirmFacilityPassword(''); setScreen('ADD_HUB'); }} className="text-[#007DA5] dark:text-blue-400 text-xs font-bold px-3 py-1 bg-blue-50 dark:bg-slate-800 rounded-lg hover:bg-blue-100 dark:hover:bg-slate-700 transition-colors">
-                  {t.updateDetail}
-                </button>
-              </div>
-              
-              <div className="grid grid-cols-3 gap-2 border-t border-gray-50 dark:border-slate-800 pt-3">
-                 <div className="text-center">
-                    <span className="block text-[10px] text-gray-400 uppercase">BMI</span>
-                    <span className="font-bold text-sm text-gray-700 dark:text-gray-300">{lab.bmi || '-'}</span>
-                 </div>
-                 <div className="text-center border-l border-gray-100 dark:border-slate-800">
-                    <span className="block text-[10px] text-gray-400 uppercase">Age</span>
-                    <span className="font-bold text-sm text-gray-700 dark:text-gray-300">{lab.age || '-'}</span>
-                 </div>
-                 <div className="text-center border-l border-gray-100 dark:border-slate-800">
-                    <span className="block text-[10px] text-gray-400 uppercase">Loss</span>
-                    <span className="font-bold text-sm text-gray-700 dark:text-gray-300">{lab.lossMl || '-'}</span>
-                 </div>
-              </div>
-            </div>
-          ))}
-        </div>
+      <div className="px-6 mb-6">
+         <Button fullWidth onClick={() => { setFormData({}); setScreen('ADD_HUB'); }}>+ {t.addHub}</Button>
+      </div>
+      <div className="px-6 pb-24 space-y-4">
+         {labs.map(lab => (
+           <div key={lab.id} className="bg-white dark:bg-slate-900 p-5 rounded-3xl shadow-sm border border-gray-100 dark:border-slate-800">
+               <div className="flex justify-between items-start mb-2">
+                  <h3 className="font-bold text-[#1A005B] dark:text-blue-100">{lab.name}</h3>
+                  <span className="text-xs bg-gray-100 dark:bg-slate-800 px-2 py-1 rounded-lg font-bold">{lab.status}</span>
+               </div>
+               <p className="text-xs text-gray-500 mb-4">{lab.detail}</p>
+               <div className="flex gap-2">
+                  <button onClick={() => { setFormData(lab); setScreen('ADD_HUB'); }} className="flex-1 py-2 rounded-xl bg-gray-50 dark:bg-slate-800 text-xs font-bold text-[#1A005B] dark:text-blue-200 hover:bg-gray-100 dark:hover:bg-slate-700">Edit</button>
+                  <button onClick={() => deleteLab(lab.id)} className="px-4 py-2 rounded-xl bg-red-50 dark:bg-red-900/20 text-xs font-bold text-red-500 hover:bg-red-100 dark:hover:bg-red-900/30">Delete</button>
+               </div>
+           </div>
+         ))}
       </div>
     </>
   );
 
   const renderAddHub = () => (
     <>
-      <Header title={formData.id ? t.updateDetail : t.addHub} showBack={true} showLang={false} showNotification={false} />
-      <div className="px-6 pb-24 overflow-y-auto h-[calc(100vh-140px)] custom-scrollbar">
-        <form onSubmit={updateLabData} className="space-y-5">
-           <div className="bg-white dark:bg-slate-900 p-5 rounded-2xl shadow-sm border border-gray-100 dark:border-slate-800 space-y-4 transition-colors">
-             <h3 className="text-sm font-bold text-[#1A005B] dark:text-blue-200 mb-2 border-b dark:border-slate-800 pb-2">Basic Information</h3>
-             
-             {/* LOGO UPLOAD SECTION */}
-             <div className="flex items-center gap-4 mb-4">
-                <div className="w-20 h-20 rounded-2xl bg-gray-100 dark:bg-slate-800 border-2 border-dashed border-gray-300 dark:border-slate-700 flex items-center justify-center overflow-hidden relative group">
-                  {formData.logo ? (
-                    <img src={formData.logo} alt="Logo" className="w-full h-full object-cover" />
-                  ) : (
-                    <span className="text-gray-400 text-xs text-center p-2 font-medium">No Logo</span>
-                  )}
-                </div>
-                <div className="flex-1">
-                   <label className="block text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-widest mb-1">Facility Logo</label>
-                   <input 
-                     type="file" 
-                     accept="image/*"
-                     onChange={handleLogoChange}
-                     className="block w-full text-xs text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-[#007DA5]/10 file:text-[#007DA5] hover:file:bg-[#007DA5]/20 dark:file:bg-blue-900/20 dark:file:text-blue-300 transition-all cursor-pointer"
-                   />
-                   <p className="text-[10px] text-gray-400 mt-1">Upload a square image for best results.</p>
-                </div>
-             </div>
-
-             <Input label="Facility Name" defaultValue={formData.name} onChange={e => setFormData({...formData, name: e.target.value})} />
-             
-             {/* State Dropdown */}
-             <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Location State</label>
+      <Header title={formData.id ? t.updateDetail : t.addHub} showBack={true} showNotification={false} />
+      <div className="px-6 pb-24">
+         <form onSubmit={updateLabData} className="bg-white dark:bg-slate-900 p-6 rounded-3xl shadow-sm border border-gray-100 dark:border-slate-800 space-y-4">
+             <div className="flex justify-center mb-6">
                 <div className="relative">
-                  <select
-                    value={formData.state || State.Maharashtra}
-                    onChange={e => setFormData({...formData, state: e.target.value})}
-                    className="w-full px-4 py-3 bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all outline-none text-gray-800 dark:text-white appearance-none"
-                  >
-                    {STATES_LIST.map(s => (
-                      <option key={s} value={s}>{s}</option>
-                    ))}
-                  </select>
-                  <div className="absolute inset-y-0 right-0 flex items-center px-2 pointer-events-none">
-                    <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path></svg>
-                  </div>
+                   <div className="w-24 h-24 rounded-full bg-gray-100 dark:bg-slate-800 flex items-center justify-center overflow-hidden border-2 border-dashed border-gray-300 dark:border-slate-600">
+                      {formData.logo ? (
+                        <img src={formData.logo} alt="Logo" className="w-full h-full object-cover" />
+                      ) : (
+                        <span className="text-gray-400 text-xs font-bold">Logo</span>
+                      )}
+                   </div>
+                   <input type="file" accept="image/*" onChange={handleLogoChange} className="absolute inset-0 opacity-0 cursor-pointer" />
+                </div>
+             </div>
+             
+             <Input label={t.name} value={formData.name || ''} onChange={e => setFormData({...formData, name: e.target.value})} required />
+             <Input label="State" value={formData.state || ''} onChange={e => setFormData({...formData, state: e.target.value})} />
+             <Input label="Status" value={formData.status || ''} onChange={e => setFormData({...formData, status: e.target.value as any})} placeholder="Active/Pending/Completed" />
+             <Input label="Amount" value={formData.amount || ''} onChange={e => setFormData({...formData, amount: e.target.value})} />
+             
+             <div className="grid grid-cols-2 gap-4">
+                <Input label="Contact Person" value={formData.contact || ''} onChange={e => setFormData({...formData, contact: e.target.value})} />
+                <Input label="Phone" value={formData.phone || ''} onChange={e => setFormData({...formData, phone: e.target.value})} />
+             </div>
+
+             <div className="border-t border-gray-100 dark:border-slate-800 pt-4">
+                <h4 className="font-bold text-[#1A005B] dark:text-blue-200 mb-4">Clinical Parameters</h4>
+                <div className="grid grid-cols-2 gap-4">
+                   <Input label="Volunteer Gender" value={formData.volunteerGender || ''} onChange={e => setFormData({...formData, volunteerGender: e.target.value})} />
+                   <Input label="Age Range" value={formData.age || ''} onChange={e => setFormData({...formData, age: e.target.value})} />
+                   <Input label="BMI Range" value={formData.bmi || ''} onChange={e => setFormData({...formData, bmi: e.target.value})} />
+                   <Input label="Blood Loss (mL)" value={formData.lossMl || ''} onChange={e => setFormData({...formData, lossMl: e.target.value})} />
+                   <Input label="In-House Stay" value={formData.inHouse || ''} onChange={e => setFormData({...formData, inHouse: e.target.value})} />
+                   <Input label="Period Count" value={formData.periodCount || ''} onChange={e => setFormData({...formData, periodCount: e.target.value})} />
                 </div>
              </div>
 
-             {/* New City/Address Input */}
-             <Input label="City / Area" defaultValue={formData.address} placeholder="e.g. Andheri West, Mumbai" onChange={e => setFormData({...formData, address: e.target.value})} />
-
-             <Input label="Status Report" defaultValue={formData.report} onChange={e => setFormData({...formData, report: e.target.value})} />
-             <Input label="Clinical Notes" defaultValue={formData.detail} onChange={e => setFormData({...formData, detail: e.target.value})} />
-             
-             {/* NEW CONTACT INPUTS */}
-             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2 border-t border-dashed dark:border-slate-700">
-                <Input label="Contact Person Name" defaultValue={formData.contact} onChange={e => setFormData({...formData, contact: e.target.value})} />
-                <Input label="Contact Phone Number" defaultValue={formData.phone} type="tel" onChange={e => setFormData({...formData, phone: e.target.value})} />
+             <div className="border-t border-gray-100 dark:border-slate-800 pt-4">
+                <h4 className="font-bold text-[#1A005B] dark:text-blue-200 mb-4">Dates & Requirements</h4>
+                <Input label="Screening Date" value={formData.screeningDate || ''} onChange={e => setFormData({...formData, screeningDate: e.target.value})} />
+                <div className="mb-4">
+                   <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Requirements / Details</label>
+                   <textarea 
+                     className="w-full px-4 py-3 bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none text-gray-800 dark:text-white"
+                     rows={4}
+                     value={formData.requirements || formData.detail || ''} 
+                     onChange={e => setFormData({...formData, requirements: e.target.value, detail: e.target.value})} 
+                   />
+                </div>
              </div>
-           </div>
 
-           <div className="bg-white dark:bg-slate-900 p-5 rounded-2xl shadow-sm border border-gray-100 dark:border-slate-800 space-y-4 transition-colors">
-             <h3 className="text-sm font-bold text-[#1A005B] dark:text-blue-200 mb-2 border-b dark:border-slate-800 pb-2">Study Parameters</h3>
-             <div className="grid grid-cols-2 gap-4">
-               <Input label="Volunteers (Gender)" defaultValue={formData.volunteerGender} placeholder="e.g. Male Only" onChange={e => setFormData({...formData, volunteerGender: e.target.value})} />
-               <Input label="In House (Duration)" defaultValue={formData.inHouse} placeholder="e.g. 72 Hours" onChange={e => setFormData({...formData, inHouse: e.target.value})} />
-               <Input label="Period Count" defaultValue={formData.periodCount} placeholder="e.g. 3" onChange={e => setFormData({...formData, periodCount: e.target.value})} />
-               <Input label="Condition" defaultValue={formData.condition} placeholder="e.g. Fasting/Fed" onChange={e => setFormData({...formData, condition: e.target.value})} />
-               <Input label="Blood Loss" defaultValue={formData.lossMl} placeholder="e.g. 357 mL" onChange={e => setFormData({...formData, lossMl: e.target.value})} />
-               <Input label="Ambulatory" defaultValue={formData.ambulatory} placeholder="e.g. No" onChange={e => setFormData({...formData, ambulatory: e.target.value})} />
-             </div>
-           </div>
-
-           <div className="bg-white dark:bg-slate-900 p-5 rounded-2xl shadow-sm border border-gray-100 dark:border-slate-800 space-y-4 transition-colors">
-             <h3 className="text-sm font-bold text-[#1A005B] dark:text-blue-200 mb-2 border-b dark:border-slate-800 pb-2">Eligibility & Compensation</h3>
-             <div className="grid grid-cols-2 gap-4">
-                <Input label="BMI Range" type="text" defaultValue={formData.bmi} placeholder="e.g. 19.5 to 30" onChange={e => setFormData({...formData, bmi: e.target.value})} />
-                <Input label="Age Range" defaultValue={formData.age} placeholder="e.g. 18 to 44" onChange={e => setFormData({...formData, age: e.target.value})} />
-             </div>
-             {/* Use the new prefix prop for Rupee Symbol */}
-             <Input 
-                label="Compensation Amount" 
-                defaultValue={formData.amount?.replace('₹ ', '')} 
-                prefix="₹"
-                placeholder="15,000" 
-                onChange={e => setFormData({...formData, amount: `₹ ${e.target.value}`})} 
-             />
-           </div>
-
-           <div className="bg-white dark:bg-slate-900 p-5 rounded-2xl shadow-sm border border-gray-100 dark:border-slate-800 space-y-4 transition-colors">
-             <h3 className="text-sm font-bold text-[#1A005B] dark:text-blue-200 mb-2 border-b dark:border-slate-800 pb-2">Schedule & Dates</h3>
-             <div className="grid grid-cols-2 gap-4">
-               <Input label="Period 1" type="text" defaultValue={formData.period1} placeholder="DD-MM-YYYY" onChange={e => setFormData({...formData, period1: e.target.value})} />
-               <Input label="Period 2" type="text" defaultValue={formData.period2} placeholder="DD-MM-YYYY" onChange={e => setFormData({...formData, period2: e.target.value})} />
-               <Input label="Period 3" type="text" defaultValue={formData.period3} placeholder="DD-MM-YYYY" onChange={e => setFormData({...formData, period3: e.target.value})} />
-               <Input label="Period 4" type="text" defaultValue={formData.period4} placeholder="DD-MM-YYYY" onChange={e => setFormData({...formData, period4: e.target.value})} />
-             </div>
-             <Input label="Screening Date" defaultValue={formData.screeningDate} placeholder="e.g. 16/01/2026 to 19/01/2026" onChange={e => setFormData({...formData, screeningDate: e.target.value})} />
-             <Input label="Screening Time" defaultValue={formData.screeningTime} placeholder="e.g. 07:30 to 10:30" onChange={e => setFormData({...formData, screeningTime: e.target.value})} />
-           </div>
-
-           <div className="bg-white dark:bg-slate-900 p-5 rounded-2xl shadow-sm border border-gray-100 dark:border-slate-800 space-y-4 transition-colors">
-              <h3 className="text-sm font-bold text-[#1A005B] dark:text-blue-200 mb-2 border-b dark:border-slate-800 pb-2">Requirements & Notes</h3>
-              <textarea 
-                className="w-full px-4 py-3 bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all outline-none text-gray-800 dark:text-white placeholder:text-gray-400 h-32"
-                placeholder="Enter document requirements and other notes..."
-                defaultValue={formData.requirements}
-                onChange={e => setFormData({...formData, requirements: e.target.value})}
-              />
-           </div>
-
-           {/* PASSWORD SECTION */}
-           <div className="bg-white dark:bg-slate-900 p-5 rounded-2xl shadow-sm border border-gray-100 dark:border-slate-800 space-y-4 transition-colors">
-             <h3 className="text-sm font-bold text-[#1A005B] dark:text-blue-200 mb-2 border-b dark:border-slate-800 pb-2">Security</h3>
-             
-             {!formData.id ? (
-               <div className="space-y-4">
-                 <Input 
-                   label="Set Facility Password" 
-                   type="password" 
-                   value={facilityPassword}
-                   onChange={e => setFacilityPassword(e.target.value)}
-                   placeholder="Create a password to secure this facility"
-                 />
-                 <Input 
-                   label="Confirm Password" 
-                   type="password" 
-                   value={confirmFacilityPassword}
-                   onChange={e => setConfirmFacilityPassword(e.target.value)}
-                   placeholder="Re-enter password"
-                 />
-                 <p className="text-xs text-gray-400">You will need this password to update or delete this facility in the future.</p>
-               </div>
-             ) : (
-               <div>
+             <div className="bg-yellow-50 dark:bg-yellow-900/10 p-4 rounded-xl space-y-4">
+                <p className="text-xs text-yellow-700 dark:text-yellow-400 font-bold">Security Verification</p>
+                <Input 
+                  label="Facility Password" 
+                  type="password" 
+                  value={facilityPassword} 
+                  onChange={e => setFacilityPassword(e.target.value)} 
+                  placeholder="Enter password to save"
+                  required
+                />
+                {!formData.id && (
                   <Input 
-                    label="Enter Facility Password to Save/Delete" 
+                    label="Confirm Password" 
                     type="password" 
-                    value={facilityPassword}
-                    onChange={e => setFacilityPassword(e.target.value)}
-                    placeholder="Required for any changes"
+                    value={confirmFacilityPassword} 
+                    onChange={e => setConfirmFacilityPassword(e.target.value)} 
+                    placeholder="Confirm password"
+                    required
                   />
-                  <p className="text-xs text-yellow-600 dark:text-yellow-500 font-medium">Authentication required to verify updates.</p>
-               </div>
-             )}
-           </div>
-           
-           <div className="flex flex-col gap-3">
-             <Button fullWidth type="submit" size="lg">
-               {formData.id ? 'Verify & Save Updates' : 'Create Facility'}
-             </Button>
-             
-             {formData.id && (
-               <Button 
-                 type="button" 
-                 variant="danger" 
-                 fullWidth 
-                 onClick={() => deleteLab(formData.id!)}
-               >
-                 Verify & Delete Facility
-               </Button>
-             )}
-           </div>
-        </form>
+                )}
+             </div>
+
+             <Button fullWidth type="submit">{t.submit}</Button>
+         </form>
       </div>
     </>
   );
 
   return (
-    <div className="max-w-md mx-auto min-h-screen bg-[#f8fafc] dark:bg-slate-950 shadow-2xl overflow-hidden relative font-sans text-slate-800 dark:text-slate-100 transition-colors duration-300">
+    <div className={`min-h-screen bg-gray-50 dark:bg-slate-950 transition-colors duration-300 font-sans text-gray-800 dark:text-gray-100`}>
       {screen === 'SPLASH' && renderSplash()}
       {screen === 'LOGIN' && renderLogin()}
       {screen === 'SIGNUP' && renderSignup()}

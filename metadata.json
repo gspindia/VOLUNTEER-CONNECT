@@ -1,0 +1,5 @@
+{
+  "name": "Volunteer Connect",
+  "description": "A volunteer management application for tracking lab activities, status reports, and contact information across multiple states.",
+  "requestFramePermissions": []
+}

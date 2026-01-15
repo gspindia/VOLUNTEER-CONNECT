@@ -20,8 +20,8 @@ export const Button: React.FC<ButtonProps> = ({
   const variants = {
     // Brand Gradient with animated background feel
     primary: "bg-gradient-to-r from-[#1A005B] to-[#007DA5] text-white hover:brightness-110 shadow-[#007DA5]/30 border-none",
-    secondary: "bg-white text-[#1A005B] border border-gray-100 hover:bg-gray-50 focus:ring-gray-300 hover:border-[#1A005B]/20",
-    outline: "border-2 border-[#1A005B] text-[#1A005B] hover:bg-[#1A005B]/5 focus:ring-[#1A005B]",
+    secondary: "bg-white dark:bg-slate-800 text-[#1A005B] dark:text-blue-200 border border-gray-100 dark:border-slate-700 hover:bg-gray-50 dark:hover:bg-slate-700 focus:ring-gray-300 hover:border-[#1A005B]/20",
+    outline: "border-2 border-[#1A005B] dark:border-blue-400 text-[#1A005B] dark:text-blue-400 hover:bg-[#1A005B]/5 dark:hover:bg-blue-400/10 focus:ring-[#1A005B]",
     danger: "bg-red-600 text-white hover:bg-red-700 focus:ring-red-500 shadow-red-500/30"
   };
 

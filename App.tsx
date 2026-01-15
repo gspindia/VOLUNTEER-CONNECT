@@ -28,6 +28,7 @@ const App: React.FC = () => {
   const [user, setUser] = useState<User | null>(null);
   const [role, setRole] = useState<Role>('VOLUNTEER');
   const [language, setLanguage] = useState<Language>('EN');
+  const [darkMode, setDarkMode] = useState(false);
   const [labs, setLabs] = useState<Lab[]>(MOCK_LABS);
   const [selectedState, setSelectedState] = useState<State | null>(null);
   const [selectedLabId, setSelectedLabId] = useState<string | null>(null);
@@ -45,6 +46,14 @@ const App: React.FC = () => {
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   const selectedLab = labs.find(l => l.id === selectedLabId);
+
+  useEffect(() => {
+    if (darkMode) {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
+  }, [darkMode]);
 
   useEffect(() => {
     if (screen === 'SPLASH') {
@@ -122,18 +131,18 @@ const App: React.FC = () => {
     <div className="relative" ref={dropdownRef}>
       <button 
         onClick={() => setIsLangOpen(!isLangOpen)}
-        className="flex items-center space-x-2 px-3 py-1.5 bg-white/80 border border-gray-100 rounded-2xl shadow-sm hover:shadow-md transition-all group"
+        className="flex items-center space-x-2 px-3 py-1.5 bg-white/80 dark:bg-slate-800/80 border border-gray-100 dark:border-slate-700 rounded-2xl shadow-sm hover:shadow-md transition-all group"
       >
-        <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-[#007DA5] group-hover:rotate-12 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-[#007DA5] dark:text-blue-400 group-hover:rotate-12 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9" />
         </svg>
-        <span className="text-[10px] font-black text-[#1A005B] uppercase tracking-widest">
+        <span className="text-[10px] font-black text-[#1A005B] dark:text-blue-100 uppercase tracking-widest">
           {LANGUAGES.find(l => l.code === language)?.label}
         </span>
       </button>
 
       {isLangOpen && (
-        <div className={`absolute left-0 w-48 bg-white border border-gray-100 rounded-[1.5rem] shadow-2xl z-[60] overflow-hidden animate-[fadeIn_0.2s_ease-out] ${
+        <div className={`absolute left-0 w-48 bg-white dark:bg-slate-900 border border-gray-100 dark:border-slate-700 rounded-[1.5rem] shadow-2xl z-[60] overflow-hidden animate-[fadeIn_0.2s_ease-out] ${
           direction === 'up' ? 'bottom-full mb-2' : 'top-full mt-2'
         }`}>
           <div className="p-2 grid grid-cols-1 max-h-64 overflow-y-auto custom-scrollbar">
@@ -146,8 +155,8 @@ const App: React.FC = () => {
                 }}
                 className={`flex items-center justify-between px-4 py-3 rounded-xl text-left transition-all ${
                   language === lang.code 
-                    ? 'bg-[#007DA5]/5 text-[#007DA5]' 
-                    : 'hover:bg-gray-50 text-gray-600'
+                    ? 'bg-[#007DA5]/5 dark:bg-blue-500/10 text-[#007DA5] dark:text-blue-400' 
+                    : 'hover:bg-gray-50 dark:hover:bg-slate-800 text-gray-600 dark:text-gray-300'
                 }`}
               >
                 <span className="font-bold text-sm">{lang.label}</span>
@@ -163,7 +172,7 @@ const App: React.FC = () => {
   );
 
   const Header = ({ title, showBack = false, showLang = true, showNotification = true }) => (
-    <div className="px-6 pt-12 pb-6 bg-white sticky top-0 z-30 shadow-[0_4px_20px_-10px_rgba(0,0,0,0.05)] rounded-b-[2rem]">
+    <div className="px-6 pt-12 pb-6 bg-white dark:bg-slate-900 sticky top-0 z-30 shadow-[0_4px_20px_-10px_rgba(0,0,0,0.05)] rounded-b-[2rem] transition-colors duration-300">
       <div className="flex justify-between items-center mb-4">
         <div className="flex items-center space-x-3">
           {showBack && (
@@ -175,37 +184,49 @@ const App: React.FC = () => {
               else if (screen === 'SIGNUP') setScreen('LOGIN');
               else if (screen === 'FORGOT_PASSWORD') setScreen('LOGIN');
               else setScreen('MAIN');
-            }} className="p-2 -ml-2 rounded-full hover:bg-gray-50 text-gray-600 transition-colors">
+            }} className="p-2 -ml-2 rounded-full hover:bg-gray-50 dark:hover:bg-slate-800 text-gray-600 dark:text-gray-300 transition-colors">
               <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 19l-7-7 7-7"></path></svg>
             </button>
           )}
           {showLang && <LanguageSelector direction="down" />}
         </div>
         
-        <div className="flex items-center space-x-3">
+        <div className="flex items-center space-x-2">
+           {/* Theme Toggle */}
+           <button 
+            onClick={() => setDarkMode(!darkMode)}
+            className="p-2 rounded-full hover:bg-gray-50 dark:hover:bg-slate-800 text-gray-500 dark:text-yellow-400 transition-colors"
+           >
+             {darkMode ? (
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
+             ) : (
+                <svg className="w-5 h-5 text-[#1A005B]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
+             )}
+           </button>
+
           {showNotification && (
-            <button onClick={() => setScreen('NOTIFICATIONS')} className="relative p-2 rounded-full hover:bg-gray-50 transition-colors">
-              <svg className="w-6 h-6 text-[#1A005B]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <button onClick={() => setScreen('NOTIFICATIONS')} className="relative p-2 rounded-full hover:bg-gray-50 dark:hover:bg-slate-800 transition-colors">
+              <svg className="w-6 h-6 text-[#1A005B] dark:text-blue-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
               </svg>
               {notifications.some(n => !n.isRead) && (
-                <span className="absolute top-2 right-2 w-2.5 h-2.5 bg-red-500 border-2 border-white rounded-full"></span>
+                <span className="absolute top-2 right-2 w-2.5 h-2.5 bg-red-500 border-2 border-white dark:border-slate-900 rounded-full"></span>
               )}
             </button>
           )}
           {user && (
-            <button onClick={handleLogout} className="p-2 rounded-full hover:bg-red-50 text-gray-400 hover:text-red-500 transition-colors">
+            <button onClick={handleLogout} className="p-2 rounded-full hover:bg-red-50 dark:hover:bg-red-900/20 text-gray-400 hover:text-red-500 transition-colors">
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg>
             </button>
           )}
         </div>
       </div>
-      <h1 className="text-2xl font-black text-[#1A005B] tracking-tight">{title}</h1>
+      <h1 className="text-2xl font-black text-[#1A005B] dark:text-blue-100 tracking-tight">{title}</h1>
     </div>
   );
 
   const renderSplash = () => (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-white">
+    <div className="flex flex-col items-center justify-center min-h-screen bg-white dark:bg-slate-950 transition-colors duration-300">
       <div className="animate-[pulse_3s_ease-in-out_infinite]">
         <VCLogo />
       </div>
@@ -213,17 +234,17 @@ const App: React.FC = () => {
   );
 
   const renderLogin = () => (
-    <div className="flex flex-col min-h-screen bg-white p-8">
+    <div className="flex flex-col min-h-screen bg-white dark:bg-slate-950 p-8 transition-colors duration-300">
       <div className="flex-1 flex flex-col justify-center items-center">
         <VCLogo size="80" className="mb-8" />
-        <h2 className="text-2xl font-bold text-[#1A005B] mb-2">{t.welcome}</h2>
-        <p className="text-gray-400 mb-8">{t.signIn}</p>
+        <h2 className="text-2xl font-bold text-[#1A005B] dark:text-blue-100 mb-2">{t.welcome}</h2>
+        <p className="text-gray-400 dark:text-gray-500 mb-8">{t.signIn}</p>
 
-        <div className="flex p-1 bg-gray-100 rounded-2xl w-full mb-8">
+        <div className="flex p-1 bg-gray-100 dark:bg-slate-900 rounded-2xl w-full mb-8 transition-colors">
           <button
             onClick={() => setRole('VOLUNTEER')}
             className={`flex-1 py-3 text-sm font-bold rounded-xl transition-all ${
-              role === 'VOLUNTEER' ? 'bg-white text-[#1A005B] shadow-sm' : 'text-gray-400 hover:text-gray-600'
+              role === 'VOLUNTEER' ? 'bg-white dark:bg-slate-800 text-[#1A005B] dark:text-blue-200 shadow-sm' : 'text-gray-400 dark:text-gray-500 hover:text-gray-600'
             }`}
           >
             {t.asVolunteer}
@@ -231,7 +252,7 @@ const App: React.FC = () => {
           <button
             onClick={() => setRole('CLIENT')}
             className={`flex-1 py-3 text-sm font-bold rounded-xl transition-all ${
-              role === 'CLIENT' ? 'bg-white text-[#1A005B] shadow-sm' : 'text-gray-400 hover:text-gray-600'
+              role === 'CLIENT' ? 'bg-white dark:bg-slate-800 text-[#1A005B] dark:text-blue-200 shadow-sm' : 'text-gray-400 dark:text-gray-500 hover:text-gray-600'
             }`}
           >
             {t.asAdmin}
@@ -256,7 +277,7 @@ const App: React.FC = () => {
             }
           />
           <div className="flex justify-end">
-            <button type="button" onClick={() => setScreen('FORGOT_PASSWORD')} className="text-xs font-bold text-[#007DA5] hover:text-[#1A005B] transition-colors">{t.forgotPass}</button>
+            <button type="button" onClick={() => setScreen('FORGOT_PASSWORD')} className="text-xs font-bold text-[#007DA5] hover:text-[#1A005B] dark:hover:text-blue-200 transition-colors">{t.forgotPass}</button>
           </div>
           <Button fullWidth type="submit" size="lg">
             {t.login}
@@ -265,16 +286,27 @@ const App: React.FC = () => {
 
         <div className="mt-8 flex flex-col items-center space-y-4 w-full">
           <div className="relative w-full text-center">
-            <div className="absolute inset-0 flex items-center"><div className="w-full border-t border-gray-100"></div></div>
-            <span className="relative bg-white px-4 text-xs font-bold text-gray-300 uppercase tracking-widest">Or</span>
+            <div className="absolute inset-0 flex items-center"><div className="w-full border-t border-gray-100 dark:border-slate-800"></div></div>
+            <span className="relative bg-white dark:bg-slate-950 px-4 text-xs font-bold text-gray-300 dark:text-gray-600 uppercase tracking-widest transition-colors">Or</span>
           </div>
           <Button variant="secondary" fullWidth onClick={() => setScreen('SIGNUP')}>
             {t.createAccount}
           </Button>
         </div>
       </div>
-      <div className="mt-auto pt-4 flex justify-center">
+      <div className="mt-auto pt-4 flex justify-between items-center px-4">
+        <div className="w-8"></div> {/* Spacer */}
         <LanguageSelector direction="up" />
+        <button 
+          onClick={() => setDarkMode(!darkMode)}
+          className="p-2 rounded-full hover:bg-gray-50 dark:hover:bg-slate-800 text-gray-500 dark:text-yellow-400 transition-colors"
+        >
+          {darkMode ? (
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
+          ) : (
+            <svg className="w-5 h-5 text-[#1A005B]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
+          )}
+        </button>
       </div>
     </div>
   );
@@ -283,7 +315,7 @@ const App: React.FC = () => {
     <>
       <Header title={t.createAccount} showBack={true} showNotification={false} />
       <div className="px-6 pb-24 overflow-y-auto h-[calc(100vh-140px)] custom-scrollbar">
-        <div className="bg-white p-6 rounded-3xl shadow-sm border border-gray-100 space-y-4">
+        <div className="bg-white dark:bg-slate-900 p-6 rounded-3xl shadow-sm border border-gray-100 dark:border-slate-800 space-y-4 transition-colors">
             <Input placeholder={t.name} />
             <Input placeholder={t.surname} />
             
@@ -317,7 +349,7 @@ const App: React.FC = () => {
                       className={`flex-1 py-2.5 rounded-xl text-xs font-bold transition-all border ${
                          selectedGender === g 
                          ? 'bg-[#007DA5] text-white border-[#007DA5]' 
-                         : 'bg-white text-gray-500 border-gray-200 hover:border-gray-300'
+                         : 'bg-white dark:bg-slate-800 text-gray-500 dark:text-gray-400 border-gray-200 dark:border-slate-700 hover:border-gray-300'
                       }`}
                     >
                       {t[g.toLowerCase()] || g}
@@ -340,11 +372,11 @@ const App: React.FC = () => {
   );
 
   const renderForgotPassword = () => (
-    <div className="flex flex-col min-h-screen bg-white p-8">
+    <div className="flex flex-col min-h-screen bg-white dark:bg-slate-950 p-8 transition-colors">
       <div className="flex-1 flex flex-col justify-center items-center">
          <VCLogo size="80" className="mb-8" />
-         <h2 className="text-2xl font-bold text-[#1A005B] mb-2">{t.resetPass}</h2>
-         <p className="text-gray-400 mb-8 text-center">{t.enterMobile}</p>
+         <h2 className="text-2xl font-bold text-[#1A005B] dark:text-blue-100 mb-2">{t.resetPass}</h2>
+         <p className="text-gray-400 dark:text-gray-500 mb-8 text-center">{t.enterMobile}</p>
 
          <div className="w-full space-y-4">
             <Input 
@@ -360,7 +392,7 @@ const App: React.FC = () => {
             
             <button 
               onClick={() => setScreen('LOGIN')}
-              className="w-full py-3 text-sm font-bold text-gray-400 hover:text-[#1A005B] transition-colors"
+              className="w-full py-3 text-sm font-bold text-gray-400 hover:text-[#1A005B] dark:hover:text-blue-200 transition-colors"
             >
               {t.backToLogin}
             </button>
@@ -391,7 +423,7 @@ const App: React.FC = () => {
           </div>
         </div>
 
-        <h3 className="text-lg font-bold text-[#1A005B] mb-4 flex items-center">
+        <h3 className="text-lg font-bold text-[#1A005B] dark:text-blue-200 mb-4 flex items-center">
           <span className="w-1 h-6 bg-[#007DA5] rounded-full mr-3"></span>
           {t.explore}
         </h3>
@@ -404,12 +436,12 @@ const App: React.FC = () => {
                 setSelectedState(state);
                 setScreen('LAB_LIST');
               }}
-              className="bg-white p-4 rounded-2xl border border-gray-100 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-300 text-left group"
+              className="bg-white dark:bg-slate-900 p-4 rounded-2xl border border-gray-100 dark:border-slate-800 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-300 text-left group"
             >
-              <div className="w-10 h-10 rounded-full bg-blue-50 text-[#007DA5] flex items-center justify-center mb-3 group-hover:bg-[#007DA5] group-hover:text-white transition-colors">
+              <div className="w-10 h-10 rounded-full bg-blue-50 dark:bg-slate-800 text-[#007DA5] dark:text-blue-400 flex items-center justify-center mb-3 group-hover:bg-[#007DA5] group-hover:text-white transition-colors">
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
               </div>
-              <h4 className="font-bold text-gray-800 text-sm">{state}</h4>
+              <h4 className="font-bold text-gray-800 dark:text-gray-100 text-sm">{state}</h4>
               <p className="text-xs text-gray-400 mt-1">{labs.filter(l => l.state === state).length} {t.facilities}</p>
             </button>
           ))}
@@ -422,10 +454,10 @@ const App: React.FC = () => {
     if (!value) return null;
     return (
       <div className="flex items-start mb-1 text-sm">
-         <span className="text-gray-300 mr-2 font-bold">➔</span>
-         <span className="font-bold text-gray-600 w-24 shrink-0">{label}</span>
-         <span className="text-gray-300 mx-2 font-bold">-</span>
-         <span className="font-bold text-[#007DA5] flex-1">{value}</span>
+         <span className="text-gray-300 dark:text-gray-600 mr-2 font-bold">➔</span>
+         <span className="font-bold text-gray-600 dark:text-gray-400 w-24 shrink-0">{label}</span>
+         <span className="text-gray-300 dark:text-gray-600 mx-2 font-bold">-</span>
+         <span className="font-bold text-[#007DA5] dark:text-blue-400 flex-1">{value}</span>
       </div>
     );
   };
@@ -440,15 +472,15 @@ const App: React.FC = () => {
           showBack={true}
         />
         <div className="px-6 pb-6">
-          <div className="flex p-1 bg-white border border-gray-100 rounded-xl mb-6 shadow-sm">
+          <div className="flex p-1 bg-white dark:bg-slate-900 border border-gray-100 dark:border-slate-800 rounded-xl mb-6 shadow-sm transition-colors">
             <button 
-              className={`flex-1 py-2 text-xs font-bold rounded-lg transition-all ${activeListTab === 'STATUS' ? 'bg-[#1A005B] text-white shadow-md' : 'text-gray-400 hover:text-gray-600'}`}
+              className={`flex-1 py-2 text-xs font-bold rounded-lg transition-all ${activeListTab === 'STATUS' ? 'bg-[#1A005B] text-white shadow-md' : 'text-gray-400 hover:text-gray-600 dark:hover:text-gray-300'}`}
               onClick={() => setActiveListTab('STATUS')}
             >
               {t.liveStatus}
             </button>
             <button 
-              className={`flex-1 py-2 text-xs font-bold rounded-lg transition-all ${activeListTab === 'DETAILS' ? 'bg-[#1A005B] text-white shadow-md' : 'text-gray-400 hover:text-gray-600'}`}
+              className={`flex-1 py-2 text-xs font-bold rounded-lg transition-all ${activeListTab === 'DETAILS' ? 'bg-[#1A005B] text-white shadow-md' : 'text-gray-400 hover:text-gray-600 dark:hover:text-gray-300'}`}
               onClick={() => setActiveListTab('DETAILS')}
             >
               {t.allDetails}
@@ -464,12 +496,12 @@ const App: React.FC = () => {
               activeListTab === 'STATUS' ? (
                 // Detailed Card View for Live Status Tab - THEMED BACK TO ORIGINAL
                 filteredLabs.map(lab => (
-                  <div key={lab.id} className="bg-white rounded-2xl p-5 border border-gray-100 shadow-sm hover:shadow-md transition-all relative overflow-hidden">
+                  <div key={lab.id} className="bg-white dark:bg-slate-900 rounded-2xl p-5 border border-gray-100 dark:border-slate-800 shadow-sm hover:shadow-md transition-all relative overflow-hidden">
                     {/* Header */}
-                    <div className="flex justify-between items-start mb-4 border-b border-gray-50 pb-2">
+                    <div className="flex justify-between items-start mb-4 border-b border-gray-50 dark:border-slate-800 pb-2">
                         <div className="flex-1">
-                          <h3 className="text-[#1A005B] font-black text-lg uppercase tracking-tight">{lab.name}</h3>
-                          <span className="text-[#007DA5] font-bold text-xs bg-blue-50 px-2 py-1 rounded-lg">{lab.lastUpdated ? lab.lastUpdated.split(' ')[0] : '15-01-2026'}</span>
+                          <h3 className="text-[#1A005B] dark:text-blue-200 font-black text-lg uppercase tracking-tight">{lab.name}</h3>
+                          <span className="text-[#007DA5] dark:text-blue-300 font-bold text-xs bg-blue-50 dark:bg-blue-900/20 px-2 py-1 rounded-lg">{lab.lastUpdated ? lab.lastUpdated.split(' ')[0] : '15-01-2026'}</span>
                         </div>
                         
                         <div className="flex items-center space-x-2">
@@ -478,7 +510,7 @@ const App: React.FC = () => {
                                e.stopPropagation();
                                openGoogleMaps(lab);
                             }}
-                            className="w-10 h-10 flex items-center justify-center rounded-full bg-blue-50 text-[#007DA5] hover:bg-blue-100 shadow-sm transition-colors active:scale-95"
+                            className="w-10 h-10 flex items-center justify-center rounded-full bg-blue-50 dark:bg-slate-800 text-[#007DA5] dark:text-blue-400 hover:bg-blue-100 dark:hover:bg-slate-700 shadow-sm transition-colors active:scale-95"
                           >
                              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
                           </button>
@@ -488,7 +520,7 @@ const App: React.FC = () => {
                                e.stopPropagation();
                                window.location.href = `tel:${lab.phone || ''}`;
                             }}
-                            className="w-10 h-10 flex items-center justify-center rounded-full bg-green-100 text-green-600 hover:bg-green-200 shadow-sm transition-colors active:scale-95"
+                            className="w-10 h-10 flex items-center justify-center rounded-full bg-green-100 dark:bg-green-900/20 text-green-600 dark:text-green-400 hover:bg-green-200 dark:hover:bg-green-900/40 shadow-sm transition-colors active:scale-95"
                           >
                              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"></path></svg>
                           </button>
@@ -508,11 +540,11 @@ const App: React.FC = () => {
                     </div>
                     
                     {/* Amount */}
-                    <div className="flex items-center bg-[#1A005B]/5 border border-[#1A005B]/10 rounded-xl px-3 py-2 my-3">
-                        <span className="text-gray-400 mr-2 font-bold">➔</span>
-                        <span className="font-bold text-[#1A005B] w-24 shrink-0">{t.amount}</span>
+                    <div className="flex items-center bg-[#1A005B]/5 dark:bg-blue-900/20 border border-[#1A005B]/10 dark:border-blue-700/30 rounded-xl px-3 py-2 my-3">
+                        <span className="text-gray-400 dark:text-gray-500 mr-2 font-bold">➔</span>
+                        <span className="font-bold text-[#1A005B] dark:text-blue-200 w-24 shrink-0">{t.amount}</span>
                          <span className="mx-2"></span>
-                        <div className="flex items-center text-[#007DA5] font-black uppercase text-sm">
+                        <div className="flex items-center text-[#007DA5] dark:text-blue-400 font-black uppercase text-sm">
                             {lab.amount || 'N/A'}
                         </div>
                     </div>
@@ -526,8 +558,8 @@ const App: React.FC = () => {
                     </div>
 
                     {/* Description / Notes */}
-                    <div className="pt-3 border-t border-gray-100 bg-gray-50/50 -mx-5 -mb-5 p-5">
-                         <p className="text-gray-600 font-medium text-sm whitespace-pre-line leading-relaxed">
+                    <div className="pt-3 border-t border-gray-100 dark:border-slate-800 bg-gray-50/50 dark:bg-slate-950/30 -mx-5 -mb-5 p-5">
+                         <p className="text-gray-600 dark:text-gray-400 font-medium text-sm whitespace-pre-line leading-relaxed">
                             {lab.requirements}
                          </p>
                     </div>
@@ -540,35 +572,35 @@ const App: React.FC = () => {
                   <div 
                     key={lab.id} 
                     onClick={() => { setSelectedLabId(lab.id); setScreen('LAB_DETAIL'); }}
-                    className="bg-white p-4 rounded-2xl border border-gray-100 shadow-sm hover:shadow-md transition-all cursor-pointer group active:scale-[0.98]"
+                    className="bg-white dark:bg-slate-900 p-4 rounded-2xl border border-gray-100 dark:border-slate-800 shadow-sm hover:shadow-md transition-all cursor-pointer group active:scale-[0.98]"
                   >
                     <div className="flex items-start gap-4">
                       {/* Logo Placeholder */}
-                      <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-blue-50 to-indigo-50 border border-indigo-100 flex items-center justify-center flex-shrink-0 shadow-sm group-hover:shadow-md transition-shadow">
-                        <span className="text-xl font-black text-[#1A005B] opacity-40">{lab.name.charAt(0)}</span>
+                      <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-slate-800 dark:to-slate-700 border border-indigo-100 dark:border-slate-600 flex items-center justify-center flex-shrink-0 shadow-sm group-hover:shadow-md transition-shadow">
+                        <span className="text-xl font-black text-[#1A005B] dark:text-blue-200 opacity-40">{lab.name.charAt(0)}</span>
                       </div>
 
                       {/* Content Container */}
                       <div className="flex-1 min-w-0 pt-0.5 relative">
                         <div className="flex justify-between items-start mb-1 pr-24">
-                          <h3 className="font-bold text-[#1A005B] text-base leading-tight group-hover:text-[#007DA5] transition-colors truncate pr-2">{lab.name}</h3>
+                          <h3 className="font-bold text-[#1A005B] dark:text-blue-100 text-base leading-tight group-hover:text-[#007DA5] dark:group-hover:text-blue-300 transition-colors truncate pr-2">{lab.name}</h3>
                           <span className={`px-2 py-0.5 rounded text-[10px] font-black uppercase tracking-wider flex-shrink-0 ${
-                            lab.status === 'Active' ? 'bg-green-100 text-green-700' :
-                            lab.status === 'Pending' ? 'bg-yellow-100 text-yellow-700' :
-                            'bg-gray-100 text-gray-600'
+                            lab.status === 'Active' ? 'bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400' :
+                            lab.status === 'Pending' ? 'bg-yellow-100 dark:bg-yellow-900/30 text-yellow-700 dark:text-yellow-400' :
+                            'bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400'
                           }`}>
                             {lab.status}
                           </span>
                         </div>
                         
-                        {/* Action Buttons placed in the requested box area (right side) */}
+                        {/* Action Buttons */}
                         <div className="absolute right-0 top-6 flex space-x-2 z-10">
                            <button 
                             onClick={(e) => {
                                e.stopPropagation();
                                openGoogleMaps(lab);
                             }}
-                            className="w-8 h-8 flex items-center justify-center rounded-full bg-blue-50 text-[#007DA5] hover:bg-blue-500 hover:text-white transition-all shadow-sm"
+                            className="w-8 h-8 flex items-center justify-center rounded-full bg-blue-50 dark:bg-slate-800 text-[#007DA5] dark:text-blue-400 hover:bg-blue-500 hover:text-white dark:hover:bg-blue-500 transition-all shadow-sm"
                           >
                              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
                           </button>
@@ -577,20 +609,20 @@ const App: React.FC = () => {
                                e.stopPropagation();
                                window.location.href = `tel:${lab.phone || ''}`;
                             }}
-                            className="w-8 h-8 flex items-center justify-center rounded-full bg-green-50 text-green-600 hover:bg-green-500 hover:text-white transition-all shadow-sm"
+                            className="w-8 h-8 flex items-center justify-center rounded-full bg-green-50 dark:bg-green-900/20 text-green-600 dark:text-green-400 hover:bg-green-500 hover:text-white dark:hover:bg-green-500 transition-all shadow-sm"
                           >
                              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"></path></svg>
                           </button>
                         </div>
                         
-                        <p className="text-xs text-gray-500 line-clamp-1 mb-3 font-medium mr-16">{lab.detail}</p>
+                        <p className="text-xs text-gray-500 dark:text-gray-400 line-clamp-1 mb-3 font-medium mr-16">{lab.detail}</p>
                         
-                        <div className="flex justify-between items-center border-t border-gray-50 pt-2">
-                          <div className="flex items-center text-[10px] font-bold text-gray-400 uppercase tracking-wide">
+                        <div className="flex justify-between items-center border-t border-gray-50 dark:border-slate-800 pt-2">
+                          <div className="flex items-center text-[10px] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-wide">
                             <svg className="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
                             {lab.state}
                           </div>
-                          <span className="text-[10px] font-bold text-[#007DA5] group-hover:translate-x-1 transition-transform flex items-center uppercase tracking-wide">
+                          <span className="text-[10px] font-bold text-[#007DA5] dark:text-blue-400 group-hover:translate-x-1 transition-transform flex items-center uppercase tracking-wide">
                             {t.view} <svg className="w-3 h-3 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7"></path></svg>
                           </span>
                         </div>
@@ -607,20 +639,20 @@ const App: React.FC = () => {
   };
 
   const DetailRow = ({ label, value, isHighlight = false, isAction = false }: { label: string, value?: string, isHighlight?: boolean, isAction?: boolean }) => (
-    <div className={`flex items-start py-1.5 ${isHighlight ? 'bg-[#007DA5]/10 p-2 rounded-lg my-1 border border-[#007DA5]/20' : ''}`}>
+    <div className={`flex items-start py-1.5 ${isHighlight ? 'bg-[#007DA5]/10 dark:bg-blue-900/20 p-2 rounded-lg my-1 border border-[#007DA5]/20 dark:border-blue-700/30' : ''}`}>
       <svg className="w-4 h-4 text-gray-400 mt-0.5 mr-2 flex-shrink-0" viewBox="0 0 20 20" fill="currentColor">
          <path fillRule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clipRule="evenodd" />
       </svg>
       <div className="flex-1 flex items-start text-sm">
-        <span className="font-bold text-gray-700 w-28 shrink-0">{label}</span>
+        <span className="font-bold text-gray-700 dark:text-gray-300 w-28 shrink-0">{label}</span>
         <span className="text-gray-400 px-2">-</span>
         {isAction ? (
-           <button className="flex-1 text-left font-black text-[#1A005B] italic hover:text-[#007DA5] transition-colors flex items-center">
+           <button className="flex-1 text-left font-black text-[#1A005B] dark:text-blue-200 italic hover:text-[#007DA5] dark:hover:text-blue-300 transition-colors flex items-center">
              <svg className="w-4 h-4 mr-1 text-yellow-500" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" /></svg>
              CLICK HERE AND WATCH AD TO VIEW
            </button>
         ) : (
-           <span className={`font-bold text-left flex-1 break-words ${isHighlight ? 'text-[#1A005B]' : 'text-[#007DA5]'}`}>
+           <span className={`font-bold text-left flex-1 break-words ${isHighlight ? 'text-[#1A005B] dark:text-blue-200' : 'text-[#007DA5] dark:text-blue-400'}`}>
              {value || 'N/A'}
            </span>
         )}
@@ -644,9 +676,9 @@ const App: React.FC = () => {
               <div className="w-8"></div>
             </div>
 
-            <div className="bg-white rounded-3xl p-6 shadow-xl mb-6">
+            <div className="bg-white dark:bg-slate-900 rounded-3xl p-6 shadow-xl mb-6 transition-colors">
               <div className="flex justify-between items-start mb-4">
-                <h2 className="text-2xl font-black text-[#1A005B] flex-1 mr-4">{selectedLab.name}</h2>
+                <h2 className="text-2xl font-black text-[#1A005B] dark:text-blue-100 flex-1 mr-4">{selectedLab.name}</h2>
                 <div className={`w-3 h-3 rounded-full mt-2 shadow-[0_0_10px_rgba(0,0,0,0.3)] ${selectedLab.status === 'Active' ? 'bg-green-500 shadow-green-200' : 'bg-yellow-500 shadow-yellow-200'}`}></div>
               </div>
               
@@ -673,15 +705,15 @@ const App: React.FC = () => {
                  </button>
               </div>
 
-              <div className="bg-blue-50/50 rounded-2xl p-4 border border-blue-100 shadow-inner">
+              <div className="bg-blue-50/50 dark:bg-slate-800/50 rounded-2xl p-4 border border-blue-100 dark:border-slate-700 shadow-inner">
                 <div className="flex justify-end mb-2">
-                   <span className="text-xs font-bold text-[#007DA5] bg-white px-2 py-1 rounded shadow-sm">{selectedLab.period1 ? selectedLab.period1.split('-')[2] : '2026'}</span>
+                   <span className="text-xs font-bold text-[#007DA5] dark:text-blue-400 bg-white dark:bg-slate-800 px-2 py-1 rounded shadow-sm">{selectedLab.period1 ? selectedLab.period1.split('-')[2] : '2026'}</span>
                 </div>
                 
                 <DetailRow label={t.contactPerson} value={selectedLab.contact} />
                 <DetailRow label={t.contactNumber} value={selectedLab.phone} />
                 
-                <div className="my-2 border-t border-dashed border-gray-300"></div>
+                <div className="my-2 border-t border-dashed border-gray-300 dark:border-slate-600"></div>
 
                 <DetailRow label="Volunteers" value={selectedLab.volunteerGender} />
                 <DetailRow label="In House" value={selectedLab.inHouse} />
@@ -694,7 +726,7 @@ const App: React.FC = () => {
                 
                 <DetailRow label={t.amount} value={selectedLab.amount} isHighlight={true} />
                 
-                <div className="my-2 border-t border-dashed border-gray-300"></div>
+                <div className="my-2 border-t border-dashed border-gray-300 dark:border-slate-600"></div>
                 
                 <DetailRow label="1st Period" value={selectedLab.period1} />
                 <DetailRow label="2nd Period" value={selectedLab.period2} />
@@ -702,8 +734,8 @@ const App: React.FC = () => {
                 <DetailRow label="4th Period" value={selectedLab.period4 || 'None'} />
               </div>
 
-              <div className="mt-6 p-4 bg-[#1A005B]/5 rounded-xl border border-[#1A005B]/10">
-                <p className="text-[#1A005B] font-bold text-sm whitespace-pre-line leading-relaxed">
+              <div className="mt-6 p-4 bg-[#1A005B]/5 dark:bg-blue-900/20 rounded-xl border border-[#1A005B]/10 dark:border-blue-700/30">
+                <p className="text-[#1A005B] dark:text-blue-200 font-bold text-sm whitespace-pre-line leading-relaxed">
                   {selectedLab.requirements || "Original Aadhar card, PAN Card compulsory\nNotes All India Net (OVIS) check and block"}
                 </p>
               </div>
@@ -719,12 +751,12 @@ const App: React.FC = () => {
       <Header title={t.notifications} showBack={true} />
       <div className="px-6 space-y-4 pb-20">
         {notifications.map(n => (
-          <div key={n.id} onClick={() => markNotificationAsRead(n.id)} className={`p-5 rounded-2xl border transition-all ${n.isRead ? 'bg-white border-gray-100' : 'bg-blue-50 border-blue-100 shadow-sm'}`}>
+          <div key={n.id} onClick={() => markNotificationAsRead(n.id)} className={`p-5 rounded-2xl border transition-all ${n.isRead ? 'bg-white dark:bg-slate-900 border-gray-100 dark:border-slate-800' : 'bg-blue-50 dark:bg-blue-900/10 border-blue-100 dark:border-blue-800 shadow-sm'}`}>
             <div className="flex items-start space-x-3">
               <div className={`mt-1 min-w-[10px] h-[10px] rounded-full ${n.type === 'alert' ? 'bg-red-500' : 'bg-[#007DA5]'}`}></div>
               <div>
-                <h4 className={`font-bold text-sm mb-1 ${n.isRead ? 'text-gray-700' : 'text-[#1A005B]'}`}>{n.title}</h4>
-                <p className="text-xs text-gray-500 mb-2 leading-relaxed">{n.message}</p>
+                <h4 className={`font-bold text-sm mb-1 ${n.isRead ? 'text-gray-700 dark:text-gray-300' : 'text-[#1A005B] dark:text-blue-200'}`}>{n.title}</h4>
+                <p className="text-xs text-gray-500 dark:text-gray-400 mb-2 leading-relaxed">{n.message}</p>
                 <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wide">{n.timestamp}</span>
               </div>
             </div>
@@ -739,7 +771,7 @@ const App: React.FC = () => {
       <Header title={t.adminDashboard} showNotification={false} />
       <div className="px-6 pb-24">
         <div className="flex justify-between items-center mb-6">
-           <h3 className="text-lg font-bold text-[#1A005B]">Managed {t.facilities}</h3>
+           <h3 className="text-lg font-bold text-[#1A005B] dark:text-blue-200">Managed {t.facilities}</h3>
            <button onClick={() => { setFormData({}); setScreen('ADD_HUB'); }} className="p-2 bg-[#1A005B] text-white rounded-xl shadow-lg hover:shadow-xl transition-all active:scale-95">
              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4v16m8-8H4"></path></svg>
            </button>
@@ -747,33 +779,33 @@ const App: React.FC = () => {
 
         <div className="space-y-4">
           {labs.map(lab => (
-            <div key={lab.id} className="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm hover:shadow-lg transition-all">
+            <div key={lab.id} className="bg-white dark:bg-slate-900 p-5 rounded-2xl border border-gray-100 dark:border-slate-800 shadow-sm hover:shadow-lg transition-all">
               <div className="flex justify-between items-start mb-4">
                 <div>
-                  <h4 className="font-bold text-[#1A005B]">{lab.name}</h4>
+                  <h4 className="font-bold text-[#1A005B] dark:text-blue-200">{lab.name}</h4>
                   <p className="text-xs text-gray-400">
                     {lab.state} 
                     {lab.lastUpdated && <span className="text-gray-300 mx-1">•</span>}
                     {lab.lastUpdated && <span className="text-[10px] text-green-600 font-medium">{lab.lastUpdated}</span>}
                   </p>
                 </div>
-                <button onClick={() => { setFormData(lab); setScreen('ADD_HUB'); }} className="text-[#007DA5] text-xs font-bold px-3 py-1 bg-blue-50 rounded-lg hover:bg-blue-100 transition-colors">
+                <button onClick={() => { setFormData(lab); setScreen('ADD_HUB'); }} className="text-[#007DA5] dark:text-blue-400 text-xs font-bold px-3 py-1 bg-blue-50 dark:bg-slate-800 rounded-lg hover:bg-blue-100 dark:hover:bg-slate-700 transition-colors">
                   {t.updateDetail}
                 </button>
               </div>
               
-              <div className="grid grid-cols-3 gap-2 border-t border-gray-50 pt-3">
+              <div className="grid grid-cols-3 gap-2 border-t border-gray-50 dark:border-slate-800 pt-3">
                  <div className="text-center">
                     <span className="block text-[10px] text-gray-400 uppercase">BMI</span>
-                    <span className="font-bold text-sm text-gray-700">{lab.bmi || '-'}</span>
+                    <span className="font-bold text-sm text-gray-700 dark:text-gray-300">{lab.bmi || '-'}</span>
                  </div>
-                 <div className="text-center border-l border-gray-100">
+                 <div className="text-center border-l border-gray-100 dark:border-slate-800">
                     <span className="block text-[10px] text-gray-400 uppercase">Age</span>
-                    <span className="font-bold text-sm text-gray-700">{lab.age || '-'}</span>
+                    <span className="font-bold text-sm text-gray-700 dark:text-gray-300">{lab.age || '-'}</span>
                  </div>
-                 <div className="text-center border-l border-gray-100">
+                 <div className="text-center border-l border-gray-100 dark:border-slate-800">
                     <span className="block text-[10px] text-gray-400 uppercase">Loss</span>
-                    <span className="font-bold text-sm text-gray-700">{lab.lossMl || '-'}</span>
+                    <span className="font-bold text-sm text-gray-700 dark:text-gray-300">{lab.lossMl || '-'}</span>
                  </div>
               </div>
             </div>
@@ -788,22 +820,22 @@ const App: React.FC = () => {
       <Header title={formData.id ? t.updateDetail : t.addHub} showBack={true} showLang={false} showNotification={false} />
       <div className="px-6 pb-24 overflow-y-auto h-[calc(100vh-140px)] custom-scrollbar">
         <form onSubmit={updateLabData} className="space-y-5">
-           <div className="bg-white p-5 rounded-2xl shadow-sm border border-gray-100 space-y-4">
-             <h3 className="text-sm font-bold text-[#1A005B] mb-2 border-b pb-2">Basic Information</h3>
+           <div className="bg-white dark:bg-slate-900 p-5 rounded-2xl shadow-sm border border-gray-100 dark:border-slate-800 space-y-4 transition-colors">
+             <h3 className="text-sm font-bold text-[#1A005B] dark:text-blue-200 mb-2 border-b dark:border-slate-800 pb-2">Basic Information</h3>
              <Input label="Facility Name" defaultValue={formData.name} onChange={e => setFormData({...formData, name: e.target.value})} />
              <Input label="Location State" defaultValue={formData.state} onChange={e => setFormData({...formData, state: e.target.value})} />
              <Input label="Status Report" defaultValue={formData.report} onChange={e => setFormData({...formData, report: e.target.value})} />
              <Input label="Clinical Notes" defaultValue={formData.detail} onChange={e => setFormData({...formData, detail: e.target.value})} />
              
              {/* NEW CONTACT INPUTS */}
-             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2 border-t border-dashed">
+             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2 border-t border-dashed dark:border-slate-700">
                 <Input label="Contact Person Name" defaultValue={formData.contact} onChange={e => setFormData({...formData, contact: e.target.value})} />
                 <Input label="Contact Phone Number" defaultValue={formData.phone} type="tel" onChange={e => setFormData({...formData, phone: e.target.value})} />
              </div>
            </div>
 
-           <div className="bg-white p-5 rounded-2xl shadow-sm border border-gray-100 space-y-4">
-             <h3 className="text-sm font-bold text-[#1A005B] mb-2 border-b pb-2">Study Parameters</h3>
+           <div className="bg-white dark:bg-slate-900 p-5 rounded-2xl shadow-sm border border-gray-100 dark:border-slate-800 space-y-4 transition-colors">
+             <h3 className="text-sm font-bold text-[#1A005B] dark:text-blue-200 mb-2 border-b dark:border-slate-800 pb-2">Study Parameters</h3>
              <div className="grid grid-cols-2 gap-4">
                <Input label="Volunteers (Gender)" defaultValue={formData.volunteerGender} placeholder="e.g. Male Only" onChange={e => setFormData({...formData, volunteerGender: e.target.value})} />
                <Input label="In House (Duration)" defaultValue={formData.inHouse} placeholder="e.g. 72 Hours" onChange={e => setFormData({...formData, inHouse: e.target.value})} />
@@ -814,8 +846,8 @@ const App: React.FC = () => {
              </div>
            </div>
 
-           <div className="bg-white p-5 rounded-2xl shadow-sm border border-gray-100 space-y-4">
-             <h3 className="text-sm font-bold text-[#1A005B] mb-2 border-b pb-2">Eligibility & Compensation</h3>
+           <div className="bg-white dark:bg-slate-900 p-5 rounded-2xl shadow-sm border border-gray-100 dark:border-slate-800 space-y-4 transition-colors">
+             <h3 className="text-sm font-bold text-[#1A005B] dark:text-blue-200 mb-2 border-b dark:border-slate-800 pb-2">Eligibility & Compensation</h3>
              <div className="grid grid-cols-2 gap-4">
                 <Input label="BMI Range" type="text" defaultValue={formData.bmi} placeholder="e.g. 19.5 to 30" onChange={e => setFormData({...formData, bmi: e.target.value})} />
                 <Input label="Age Range" defaultValue={formData.age} placeholder="e.g. 18 to 44" onChange={e => setFormData({...formData, age: e.target.value})} />
@@ -830,8 +862,8 @@ const App: React.FC = () => {
              />
            </div>
 
-           <div className="bg-white p-5 rounded-2xl shadow-sm border border-gray-100 space-y-4">
-             <h3 className="text-sm font-bold text-[#1A005B] mb-2 border-b pb-2">Schedule & Dates</h3>
+           <div className="bg-white dark:bg-slate-900 p-5 rounded-2xl shadow-sm border border-gray-100 dark:border-slate-800 space-y-4 transition-colors">
+             <h3 className="text-sm font-bold text-[#1A005B] dark:text-blue-200 mb-2 border-b dark:border-slate-800 pb-2">Schedule & Dates</h3>
              <div className="grid grid-cols-2 gap-4">
                <Input label="Period 1" type="text" defaultValue={formData.period1} placeholder="DD-MM-YYYY" onChange={e => setFormData({...formData, period1: e.target.value})} />
                <Input label="Period 2" type="text" defaultValue={formData.period2} placeholder="DD-MM-YYYY" onChange={e => setFormData({...formData, period2: e.target.value})} />
@@ -842,10 +874,10 @@ const App: React.FC = () => {
              <Input label="Screening Time" defaultValue={formData.screeningTime} placeholder="e.g. 07:30 to 10:30" onChange={e => setFormData({...formData, screeningTime: e.target.value})} />
            </div>
 
-           <div className="bg-white p-5 rounded-2xl shadow-sm border border-gray-100 space-y-4">
-              <h3 className="text-sm font-bold text-[#1A005B] mb-2 border-b pb-2">Requirements & Notes</h3>
+           <div className="bg-white dark:bg-slate-900 p-5 rounded-2xl shadow-sm border border-gray-100 dark:border-slate-800 space-y-4 transition-colors">
+              <h3 className="text-sm font-bold text-[#1A005B] dark:text-blue-200 mb-2 border-b dark:border-slate-800 pb-2">Requirements & Notes</h3>
               <textarea 
-                className="w-full px-4 py-3 bg-white border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all outline-none text-gray-800 placeholder:text-gray-400 h-32"
+                className="w-full px-4 py-3 bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all outline-none text-gray-800 dark:text-white placeholder:text-gray-400 h-32"
                 placeholder="Enter document requirements and other notes..."
                 defaultValue={formData.requirements}
                 onChange={e => setFormData({...formData, requirements: e.target.value})}
@@ -859,7 +891,7 @@ const App: React.FC = () => {
   );
 
   return (
-    <div className="max-w-md mx-auto min-h-screen bg-[#f8fafc] shadow-2xl overflow-hidden relative font-sans text-slate-800">
+    <div className="max-w-md mx-auto min-h-screen bg-[#f8fafc] dark:bg-slate-950 shadow-2xl overflow-hidden relative font-sans text-slate-800 dark:text-slate-100 transition-colors duration-300">
       {screen === 'SPLASH' && renderSplash()}
       {screen === 'LOGIN' && renderLogin()}
       {screen === 'SIGNUP' && renderSignup()}

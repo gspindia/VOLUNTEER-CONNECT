@@ -60,7 +60,8 @@ export const TRANSLATIONS: Record<Language, any> = {
     contact: "Contact",
     contactPerson: "Contact Person",
     contactNumber: "Contact Number",
-    call: "Call"
+    call: "Call",
+    directions: "Get Directions"
   },
   HI: {
     welcome: "वापसी पर स्वागत है",
@@ -102,7 +103,8 @@ export const TRANSLATIONS: Record<Language, any> = {
     contact: "संपर्क",
     contactPerson: "संपर्क व्यक्ति",
     contactNumber: "संपर्क नंबर",
-    call: "कॉल करें"
+    call: "कॉल करें",
+    directions: "दिशा प्राप्त करें"
   },
   MR: {
     welcome: "पुन्हा स्वागत आहे",
@@ -144,7 +146,8 @@ export const TRANSLATIONS: Record<Language, any> = {
     contact: "संपर्क",
     contactPerson: "संपर्क व्यक्ती",
     contactNumber: "संपर्क क्रमांक",
-    call: "कॉल करा"
+    call: "कॉल करा",
+    directions: "ದಿಕ್ಕುಗಳನ್ನು ಪಡೆಯಿರಿ" 
   },
   GU: {
     welcome: "સ્વાગત છે",
@@ -186,7 +189,8 @@ export const TRANSLATIONS: Record<Language, any> = {
     contact: "સંપર્ક",
     contactPerson: "સંપર્ક વ્યક્તિ",
     contactNumber: "સંપર્ક નંબર",
-    call: "કોલ કરો"
+    call: "કોલ કરો",
+    directions: "દિશાઓ મેળવો"
   },
   TE: {
     welcome: "స్వాగతం",
@@ -228,7 +232,8 @@ export const TRANSLATIONS: Record<Language, any> = {
     contact: "సంప్రదించండి",
     contactPerson: "సంప్రదింపు వ్యక్తి",
     contactNumber: "సంప్రదింపు సంఖ్య",
-    call: "కాల్ చేయండి"
+    call: "కాల్ చేయండి",
+    directions: "దిశలను పొందండి"
   },
   TA: {
     welcome: "வரவேற்கிறோம்",
@@ -270,7 +275,8 @@ export const TRANSLATIONS: Record<Language, any> = {
     contact: "தொடர்பு",
     contactPerson: "தொடர்பு நபர்",
     contactNumber: "தொடர்பு எண்",
-    call: "அழைப்பு"
+    call: "அழைப்பு",
+    directions: "திசைகளைப் பெறுக"
   },
   KN: {
     welcome: "ಸ್ವಾಗತ",
@@ -312,7 +318,8 @@ export const TRANSLATIONS: Record<Language, any> = {
     contact: "ಸಂಪರ್ಕಿಸಿ",
     contactPerson: "ಸಂಪರ್ಕ ವ್ಯಕ್ತಿ",
     contactNumber: "ಸಂಪರ್ಕ ಸಂಖ್ಯೆ",
-    call: "ಕರೆ ಮಾಡಿ"
+    call: "ಕರೆ ಮಾಡಿ",
+    directions: "ದಿಕ್ಕುಗಳನ್ನು ಪಡೆಯಿರಿ"
   }
 };
 

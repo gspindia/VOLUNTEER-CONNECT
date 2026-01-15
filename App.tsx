@@ -113,6 +113,11 @@ const App: React.FC = () => {
     return "Good Night";
   };
 
+  const openGoogleMaps = (lab: Lab) => {
+    const query = encodeURIComponent(`${lab.name}, ${lab.state}`);
+    window.open(`https://www.google.com/maps/search/?api=1&query=${query}`, '_blank');
+  };
+
   const LanguageSelector = ({ direction = 'down' }: { direction?: 'up' | 'down' }) => (
     <div className="relative" ref={dropdownRef}>
       <button 
@@ -467,15 +472,27 @@ const App: React.FC = () => {
                           <span className="text-[#007DA5] font-bold text-xs bg-blue-50 px-2 py-1 rounded-lg">{lab.lastUpdated ? lab.lastUpdated.split(' ')[0] : '15-01-2026'}</span>
                         </div>
                         
-                        <button 
-                          onClick={(e) => {
-                             e.stopPropagation();
-                             window.location.href = `tel:${lab.phone || ''}`;
-                          }}
-                          className="ml-2 w-10 h-10 flex items-center justify-center rounded-full bg-green-100 text-green-600 hover:bg-green-200 shadow-sm transition-colors active:scale-95"
-                        >
-                           <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"></path></svg>
-                        </button>
+                        <div className="flex items-center space-x-2">
+                          <button 
+                            onClick={(e) => {
+                               e.stopPropagation();
+                               openGoogleMaps(lab);
+                            }}
+                            className="w-10 h-10 flex items-center justify-center rounded-full bg-blue-50 text-[#007DA5] hover:bg-blue-100 shadow-sm transition-colors active:scale-95"
+                          >
+                             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                          </button>
+                          
+                          <button 
+                            onClick={(e) => {
+                               e.stopPropagation();
+                               window.location.href = `tel:${lab.phone || ''}`;
+                            }}
+                            className="w-10 h-10 flex items-center justify-center rounded-full bg-green-100 text-green-600 hover:bg-green-200 shadow-sm transition-colors active:scale-95"
+                          >
+                             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"></path></svg>
+                          </button>
+                        </div>
                     </div>
                     
                     {/* Body */}
@@ -533,7 +550,7 @@ const App: React.FC = () => {
 
                       {/* Content Container */}
                       <div className="flex-1 min-w-0 pt-0.5 relative">
-                        <div className="flex justify-between items-start mb-1 pr-10">
+                        <div className="flex justify-between items-start mb-1 pr-24">
                           <h3 className="font-bold text-[#1A005B] text-base leading-tight group-hover:text-[#007DA5] transition-colors truncate pr-2">{lab.name}</h3>
                           <span className={`px-2 py-0.5 rounded text-[10px] font-black uppercase tracking-wider flex-shrink-0 ${
                             lab.status === 'Active' ? 'bg-green-100 text-green-700' :
@@ -544,18 +561,29 @@ const App: React.FC = () => {
                           </span>
                         </div>
                         
-                        {/* Call Button placed in the requested box area (right side) */}
-                         <button 
-                          onClick={(e) => {
-                             e.stopPropagation();
-                             window.location.href = `tel:${lab.phone || ''}`;
-                          }}
-                          className="absolute right-0 top-6 w-8 h-8 flex items-center justify-center rounded-full bg-green-50 text-green-600 hover:bg-green-500 hover:text-white transition-all shadow-sm z-10"
-                        >
-                           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"></path></svg>
-                        </button>
+                        {/* Action Buttons placed in the requested box area (right side) */}
+                        <div className="absolute right-0 top-6 flex space-x-2 z-10">
+                           <button 
+                            onClick={(e) => {
+                               e.stopPropagation();
+                               openGoogleMaps(lab);
+                            }}
+                            className="w-8 h-8 flex items-center justify-center rounded-full bg-blue-50 text-[#007DA5] hover:bg-blue-500 hover:text-white transition-all shadow-sm"
+                          >
+                             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                          </button>
+                           <button 
+                            onClick={(e) => {
+                               e.stopPropagation();
+                               window.location.href = `tel:${lab.phone || ''}`;
+                            }}
+                            className="w-8 h-8 flex items-center justify-center rounded-full bg-green-50 text-green-600 hover:bg-green-500 hover:text-white transition-all shadow-sm"
+                          >
+                             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"></path></svg>
+                          </button>
+                        </div>
                         
-                        <p className="text-xs text-gray-500 line-clamp-1 mb-3 font-medium mr-8">{lab.detail}</p>
+                        <p className="text-xs text-gray-500 line-clamp-1 mb-3 font-medium mr-16">{lab.detail}</p>
                         
                         <div className="flex justify-between items-center border-t border-gray-50 pt-2">
                           <div className="flex items-center text-[10px] font-bold text-gray-400 uppercase tracking-wide">
@@ -628,10 +656,17 @@ const App: React.FC = () => {
                 </div>
               )}
               
-              <div className="flex justify-center mb-6">
+              <div className="flex justify-center space-x-4 mb-6">
+                 <button 
+                    onClick={() => openGoogleMaps(selectedLab)}
+                    className="flex items-center space-x-2 bg-blue-500 text-white px-5 py-2 rounded-full font-bold shadow-lg shadow-blue-200 hover:bg-blue-600 active:scale-95 transition-all"
+                 >
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                    <span>{t.directions}</span>
+                 </button>
                  <button 
                     onClick={() => window.location.href = `tel:${selectedLab.phone || ''}`}
-                    className="flex items-center space-x-2 bg-green-500 text-white px-6 py-2 rounded-full font-bold shadow-lg shadow-green-200 hover:bg-green-600 active:scale-95 transition-all"
+                    className="flex items-center space-x-2 bg-green-500 text-white px-5 py-2 rounded-full font-bold shadow-lg shadow-green-200 hover:bg-green-600 active:scale-95 transition-all"
                  >
                     <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"></path></svg>
                     <span>{t.call} Now</span>

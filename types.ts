@@ -28,6 +28,11 @@ export interface Lab {
   period2?: string;
   period3?: string;
   period4?: string;
+  // New fields for detailed view
+  screeningDate?: string;
+  screeningTime?: string;
+  requirements?: string;
+  lastUpdated?: string;
 }
 
 export interface AppNotification {

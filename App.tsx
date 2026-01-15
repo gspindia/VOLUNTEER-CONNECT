@@ -104,13 +104,66 @@ const App: React.FC = () => {
 
   const updateLabData = (e: React.FormEvent) => {
     e.preventDefault();
-    if (formData.id) {
-      const now = new Date();
-      const timestamp = now.toLocaleDateString('en-GB') + ' ' + now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true });
+    const now = new Date();
+    const timestamp = now.toLocaleDateString('en-GB') + ' ' + now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true });
 
+    if (formData.id) {
+      // Update existing
       setLabs(prev => prev.map(l => l.id === formData.id ? { ...l, ...formData, lastUpdated: timestamp } as Lab : l));
+    } else {
+      // Create new
+      const newLab: Lab = {
+        id: Date.now().toString(),
+        name: formData.name || 'New Facility',
+        state: (formData.state as string) || State.Maharashtra,
+        status: 'Pending',
+        detail: formData.detail || '',
+        report: formData.report || 'Pending',
+        contact: formData.contact || '',
+        phone: formData.phone || '',
+        logo: formData.logo,
+        volunteerGender: formData.volunteerGender || 'All',
+        inHouse: formData.inHouse || '-',
+        periodCount: formData.periodCount || '-',
+        condition: formData.condition || '-',
+        lossMl: formData.lossMl || '-',
+        ambulatory: formData.ambulatory || 'No',
+        bmi: formData.bmi || '-',
+        age: formData.age || '-',
+        amount: formData.amount || '₹ 0',
+        period1: formData.period1 || '-',
+        period2: formData.period2 || '-',
+        period3: formData.period3 || '-',
+        period4: formData.period4 || '-',
+        screeningDate: formData.screeningDate || '',
+        screeningTime: formData.screeningTime || '',
+        requirements: formData.requirements || '',
+        lastUpdated: timestamp,
+        ...formData
+      } as Lab;
+      setLabs(prev => [newLab, ...prev]);
+    }
+    
+    setScreen('CLIENT_DASHBOARD');
+    setFormData({});
+  };
+
+  const deleteLab = (id: string) => {
+    if (window.confirm('Are you sure you want to delete this facility? This action cannot be undone.')) {
+      setLabs(prev => prev.filter(l => l.id !== id));
       setScreen('CLIENT_DASHBOARD');
       setFormData({});
+    }
+  };
+  
+  const handleLogoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setFormData(prev => ({ ...prev, logo: reader.result as string }));
+      };
+      reader.readAsDataURL(file);
     }
   };
 
@@ -576,8 +629,12 @@ const App: React.FC = () => {
                   >
                     <div className="flex items-start gap-4">
                       {/* Logo Placeholder */}
-                      <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-slate-800 dark:to-slate-700 border border-indigo-100 dark:border-slate-600 flex items-center justify-center flex-shrink-0 shadow-sm group-hover:shadow-md transition-shadow">
-                        <span className="text-xl font-black text-[#1A005B] dark:text-blue-200 opacity-40">{lab.name.charAt(0)}</span>
+                      <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-slate-800 dark:to-slate-700 border border-indigo-100 dark:border-slate-600 flex items-center justify-center flex-shrink-0 shadow-sm group-hover:shadow-md transition-shadow overflow-hidden">
+                        {lab.logo ? (
+                            <img src={lab.logo} alt={lab.name} className="w-full h-full object-cover" />
+                        ) : (
+                            <span className="text-xl font-black text-[#1A005B] dark:text-blue-200 opacity-40">{lab.name.charAt(0)}</span>
+                        )}
                       </div>
 
                       {/* Content Container */}
@@ -822,6 +879,28 @@ const App: React.FC = () => {
         <form onSubmit={updateLabData} className="space-y-5">
            <div className="bg-white dark:bg-slate-900 p-5 rounded-2xl shadow-sm border border-gray-100 dark:border-slate-800 space-y-4 transition-colors">
              <h3 className="text-sm font-bold text-[#1A005B] dark:text-blue-200 mb-2 border-b dark:border-slate-800 pb-2">Basic Information</h3>
+             
+             {/* LOGO UPLOAD SECTION */}
+             <div className="flex items-center gap-4 mb-4">
+                <div className="w-20 h-20 rounded-2xl bg-gray-100 dark:bg-slate-800 border-2 border-dashed border-gray-300 dark:border-slate-700 flex items-center justify-center overflow-hidden relative group">
+                  {formData.logo ? (
+                    <img src={formData.logo} alt="Logo" className="w-full h-full object-cover" />
+                  ) : (
+                    <span className="text-gray-400 text-xs text-center p-2 font-medium">No Logo</span>
+                  )}
+                </div>
+                <div className="flex-1">
+                   <label className="block text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-widest mb-1">Facility Logo</label>
+                   <input 
+                     type="file" 
+                     accept="image/*"
+                     onChange={handleLogoChange}
+                     className="block w-full text-xs text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-[#007DA5]/10 file:text-[#007DA5] hover:file:bg-[#007DA5]/20 dark:file:bg-blue-900/20 dark:file:text-blue-300 transition-all cursor-pointer"
+                   />
+                   <p className="text-[10px] text-gray-400 mt-1">Upload a square image for best results.</p>
+                </div>
+             </div>
+
              <Input label="Facility Name" defaultValue={formData.name} onChange={e => setFormData({...formData, name: e.target.value})} />
              <Input label="Location State" defaultValue={formData.state} onChange={e => setFormData({...formData, state: e.target.value})} />
              <Input label="Status Report" defaultValue={formData.report} onChange={e => setFormData({...formData, report: e.target.value})} />
@@ -883,8 +962,23 @@ const App: React.FC = () => {
                 onChange={e => setFormData({...formData, requirements: e.target.value})}
               />
            </div>
-
-           <Button fullWidth type="submit" size="lg">Save Updates</Button>
+           
+           <div className="flex flex-col gap-3">
+             <Button fullWidth type="submit" size="lg">
+               {formData.id ? 'Save Updates' : 'Create Facility'}
+             </Button>
+             
+             {formData.id && (
+               <Button 
+                 type="button" 
+                 variant="danger" 
+                 fullWidth 
+                 onClick={() => deleteLab(formData.id!)}
+               >
+                 Delete Facility
+               </Button>
+             )}
+           </div>
         </form>
       </div>
     </>

@@ -1,4 +1,3 @@
-
 export type Screen = 'SPLASH' | 'LOGIN' | 'SIGNUP' | 'FORGOT_PASSWORD' | 'MAIN' | 'LAB_LIST' | 'LAB_DETAIL' | 'NOTIFICATIONS' | 'CLIENT_DASHBOARD' | 'ADD_HUB';
 
 export type Role = 'VOLUNTEER' | 'CLIENT';
@@ -14,6 +13,7 @@ export interface Lab {
   report: string;
   contact: string;
   phone: string;
+  logo?: string;
   // Clinical/Operational Parameters
   volunteerGender?: string;
   periodCount?: string;
